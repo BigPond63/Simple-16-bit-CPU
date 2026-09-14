@@ -8,7 +8,7 @@ Please enter your student ID:
 
 */
 
-module components_tb.v;
+module components_tb;
     // TODO: Implement the logic of your testbench here
 	 
 	 /* SIGN EXTENDER
@@ -35,15 +35,11 @@ module components_tb.v;
 			- reset cycle only
 			- test who wins -> enable resest
 			
-			- mix enable and rest cycle
-				EEEE
-				RRRR EEEE
-				ERER EEEE
-				RERE EEE 
-				ERER EEEE
-				RREE EE
-				EERR EEEE
-				 there's too many
+			- reset alone, confirm 0001 is the state
+			- enable alone, confirm it cycles through all states
+			- do reset and enable simultaneously
+			- check illegal states
+			- test with and without clock
 				
 				
 		
@@ -60,7 +56,9 @@ module components_tb.v;
 	 
 	 /* MUX
 	 
-	 asdfsljdjaklsjd
+		- check each one goes to where it is suppose to go
+		- check illegal selects
+		- check that all other values are not changed when selecting 
 	 
 	 */
 	 
@@ -69,6 +67,7 @@ module components_tb.v;
 	 
 	 // ALU
 		// ADD -> ripple carry adder
+		
 		// SUB -> ripple carry adder 
 		
 		
@@ -77,6 +76,17 @@ module components_tb.v;
 		// A-B = neg
 		// A + B = overflow
 		// 
+		
+	/*
+		add
+		- positive + positive check
+		- overflow 
+		sub 
+		- what hapens wtih sub
+		- negative result?
+		- all zeros + all zeros
+		- all ones + all ones
+	*/
 		
 	/* registers
 		- test who wins with rst and r_in

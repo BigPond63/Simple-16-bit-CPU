@@ -7,7 +7,7 @@ Please enter your name and student ID:
 
 */
 
-// OK
+
 module sign_extend(in, ext);
 	/* 
 	 * This module sign extends the 9-bit Din to a 16-bit output.
@@ -54,6 +54,7 @@ module tick_FSM(rst, clk, enable, tick);
 			endcase
 			
 		end
+	end
 		
 	always @(*) begin
 	
@@ -102,7 +103,7 @@ module multiplexer(SignExtDin, R0, R1, R2, R3, R4, R5, R6, R7, G, sel, Bus);
 	// TODO: implement logic
 	always @(*) begin
 		case (sel) // assumed logic here
-			default: // wait
+			default: bus_reg = 16'b0;
 			4'b0000: bus_reg = R0;
 			4'b0001: bus_reg = R1;
 			4'b0010: bus_reg = R2;
