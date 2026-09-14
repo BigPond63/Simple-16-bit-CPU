@@ -37,20 +37,32 @@ module tick_FSM(rst, clk, enable, tick);
 	 output [3:0] tick; // one-hot state 0001 0010 0100 1000
 	
 	reg [3:0] tick_reg;
+	reg [3:0] next_state;
 	
 	assign tick = tick_reg;
 	
 	// TODO: implement FSM
 	always @(posedge clk) begin
 	
-		case (rst)
-			1'b0: tick_reg <= tick_reg;
-			1'b1: tick_reg <= 4'b0001;
-		endcase
+		if (rst) begin
+			tick_reg <= 4'b0001;
+		end else begin
 		
-		case (enable)
-			1'b0: tick_reg <= tick_reg;
-			1'b1: tick_reg <= tick_reg << 1;
+			case (enable)
+				1'b0: tick_reg <= tick_reg;
+				1'b1: tick_reg <= next_state;
+			endcase
+			
+		end
+		
+	always @(*) begin
+	
+		case (tick_reg)
+			default: next_state = 4'b0001; 
+			4'b0001: next_state = 4'b0010;
+			4'b0010: next_state = 4'b0100;
+			4'b0100: next_state = 4'b1000;
+			4'b1000: next_state = 4'b0001;
 		endcase
 	end
 	
@@ -58,7 +70,7 @@ module tick_FSM(rst, clk, enable, tick);
 endmodule
 
 
-// not ok
+
 module multiplexer(SignExtDin, R0, R1, R2, R3, R4, R5, R6, R7, G, sel, Bus);
 	/* 
 	 * This module takes 10 inputs and places the correct input onto the bus.
@@ -78,27 +90,36 @@ module multiplexer(SignExtDin, R0, R1, R2, R3, R4, R5, R6, R7, G, sel, Bus);
 	 input [3:0] sel;
 	 output [15:0] Bus;
 	 
+	 reg [15:0] bus_reg;
+	 assign Bus = bus_reg;
+	 
 	
 	/*
 		ONLY ASSERTED IF ENABLE SIGNAL ON REGISTER IS 1
 		
-		I have no idea the cases for sel
 	*/
 	
 	// TODO: implement logic
 	always @(*) begin
 		case (sel) // assumed logic here
-			default: ;
+			default: // wait
+			4'b0000: bus_reg = R0;
+			4'b0001: bus_reg = R1;
+			4'b0010: bus_reg = R2;
+			4'b0011: bus_reg = R3;
+			4'b0100: bus_reg = R4;
+			4'b0101: bus_reg = R5;
+			4'b0110: bus_reg = R6;
+			4'b0111: bus_reg = R7;
+			4'b1000: bus_reg = G;
+			4'b1001: bus_reg = SignExtDin;
 		endcase
-		
-	
 	end
-
 
 endmodule
 
 
-// ok
+
 module ALU (input_a, input_b, alu_op, result);
 	/* 
 	 * This module implements the arithmetic logic unit of the processor.
@@ -136,7 +157,7 @@ module ALU (input_a, input_b, alu_op, result);
 			
 			end
 			
-			default: ; // have to double check this
+			default: result_reg = 16'b0; // have to double check this
 		
 		endcase
 	
@@ -178,15 +199,14 @@ module register_n(data_in, r_in, clk, Q, rst);
 	
 	// change this so that there isn't a race condition with rst and r_in
 	always @(posedge clk) begin
-		case (rst)
-			1'b0: Q_reg <= Q_reg;
-			1'b1: Q_reg <= {N{1'b0}}; // I don't know how to correspond the length to 'N'
-		endcase
-		
-		case (r_in)
-			1'b0: Q_reg <= Q_reg;
-			1'b1: Q_reg <= data_in;
-		endcase
+		if (rst) begin
+			Q_reg <= {N{1'b0}};
+		end else begin
+			case (r_in)
+				1'b0: Q_reg <= Q_reg;
+				1'b1: Q_reg <= data_in;
+			endcase
+		end
 		
 	end
 	
