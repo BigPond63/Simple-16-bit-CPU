@@ -13,14 +13,14 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 input [0:0] clk;
 	 input [0:0] rst;
 	 input [8:0] din;
-	 input [15:0] R0;
-	 input [15:0] R1;
-	 input [15:0] R2;
-	 input [15:0] R3;
-	 input [15:0] R4;
-	 input [15:0] R5;
-	 input [15:0] R6;
-	 input [15:0] R7;
+	 output [15:0] R0;
+	 output [15:0] R1;
+	 output [15:0] R2;
+	 output [15:0] R3;
+	 output [15:0] R4;
+	 output [15:0] R5;
+	 output [15:0] R6;
+	 output [15:0] R7;
 	 
 	 output [15:0] bus; // check
 
@@ -42,12 +42,12 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 
 	 wire [15:0] alu_in_A;
 	 wire [15:0] alu_in_B;
-	 wire [15:0] alu_out;
+	 wire [15:0] alu_out_wire;
 	 wire [3:0] tick_fsm_out;
 	 wire [15:0] bus_wire;
 	 
 	 
-	 reg [8:0] din_tick;
+	 
 	 reg [3:0] sel_reg;
 	 reg [2:0] alu_op_reg;
 	 reg G_in;
@@ -55,6 +55,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 reg [7:0] R_in;
 	 reg IR_in;
     
+	 assign bus = bus_wire;
 
     // TODO: instantiate registers:
 	 register_n #(.N(9)) reg_IR(
@@ -148,7 +149,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
     
     
     // TODO: instantiate Multiplexer:
-	 multiplexer ins0 (
+	 multiplexer mux_ins0 (
 		.SignExtDin(sign_ext_output),
 		.R0(output_R0),
 		.R1(output_R1),
@@ -236,7 +237,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 							end
 							
 							3'd3: begin
-								A_in = 1'b1:
+								A_in = 1'b1;
 								sel_reg = {1'b0, output_IR[5:3]};
 							end
 							
@@ -244,6 +245,8 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 								sel_reg = 4'd9;
 								R_in[output_IR[5:3]] = 1'b1; // activate Rx
 							end
+							
+							default: ;
 						  
 						endcase
 						  
@@ -261,17 +264,18 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 						  */
 						  
 						  case (output_IR[8:6]) 
-						  
+								default: ;
+								
 							  3'd1: begin
 									sel_reg = {1'd0, output_IR[2:0]};
-									alu_op_reg = 3'd0;
+									alu_op_reg = 3'd1;
 							  
 									G_in = 1'd1; // store result in reg G
 								end
 								
 								3'd2: begin
 									sel_reg = {1'd0, output_IR[5:3]};
-									alu_op_reg = 3'd0;
+									alu_op_reg = 3'd1;
 									
 									G_in = 1'd1;
 								end
@@ -298,6 +302,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 						  */
 						  
 						  case (output_IR[8:6])
+								default: ;
 						  
 								3'd1: begin
 						  
@@ -313,8 +318,8 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 								end
 								
 								3'd3: begin
-									sel_reg = 4'd8;
-									R_in[output_IR[5:3]] = 1'b1;
+									sel_reg = 4'd8; // g
+									R_in[output_IR[5:3]] = 1'b1; // rx
 								end
 								
 								3'd7: ; // idle
