@@ -45,10 +45,10 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 wire [15:0] alu_out;
 	 wire [3:0] tick_fsm_out;
 	 wire [15:0] bus_wire;
-	 wire [3:0] sel_wire;
+	 
 	 
 	 reg [8:0] din_tick;
-	 
+	 reg [3:0] sel_reg;
 	 reg [2:0] alu_op_reg;
 	 reg G_in;
 	 reg A_in;
@@ -130,7 +130,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		); 
 		
 	register_n #(.N(16)) reg_G(
-		.data_in(alu_out_wire)
+		.data_in(alu_out_wire),
 		.r_in(G_in), 
 		.clk(clk), 
 		.Q(output_G),
@@ -159,13 +159,13 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		.R6(output_R6),
 		.R7(output_R7),
 		.G(output_G),
-		.sel(sel_wire),
+		.sel(sel_reg),
 		.Bus(bus_wire)
 	);
     
     
     // TODO: instantiate ALU:
-	 ALU ins0 (
+	 ALU alu_ins0 (
 		.input_a(output_A),
 		.input_b(bus_wire),
 		.alu_op(alu_op_reg),
@@ -175,15 +175,15 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
     
 
     // TODO: instantiate tick counter:
-	 tick_FSM ins0 (
+	 tick_FSM fsm_ins0 (
 		.rst(rst),
 		.clk(clk),
-		.enable,
+		.enable(1),
 		.tick(tick_fsm_out)
 	);
 	
 	// instantiate sign extender for data input:
-	sign_extend ins0 (
+	sign_extend ext_ins0 (
 		.in(din),
 		.ext(sign_ext_output)
 	);
@@ -195,8 +195,9 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		  R_in = 8'b0;
 		  A_in = 1'b0;
 		  G_in = 1'b0;
-		  alu_op = 3'd7; // 3'b111 is default 0's as alu output
+		  alu_op_reg = 3'd7; // 3'b111 is default 0's as alu output
 		  IR_in = 1'b0;
+		  sel_reg = 3'b000;
 
 
         // TODO: Turn on specific control signals based on current tick:
@@ -226,7 +227,22 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 							// addition store into A
 							3'd1: begin
 								A_in = 1'b1;
-								sel_wire = {1'b0, output_IR[5:3]};
+								sel_reg = {1'b0, output_IR[5:3]};
+							end
+							
+							3'd2: begin
+								A_in = 1'b1;
+								sel_reg = 4'd9; // selection for the sign ext din
+							end
+							
+							3'd3: begin
+								A_in = 1'b1:
+								sel_reg = {1'b0, output_IR[5:3]};
+							end
+							
+							3'd7: begin
+								sel_reg = 4'd9;
+								R_in[output_IR[5:3]] = 1'b1; // activate Rx
 							end
 						  
 						endcase
@@ -247,11 +263,28 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 						  case (output_IR[8:6]) 
 						  
 							  3'd1: begin
-									sel_wire = {1'b0, din_tick[2:0]};
+									sel_reg = {1'd0, output_IR[2:0]};
 									alu_op_reg = 3'd0;
 							  
-									G_in = 1'b1; // store result in reg G
+									G_in = 1'd1; // store result in reg G
 								end
+								
+								3'd2: begin
+									sel_reg = {1'd0, output_IR[5:3]};
+									alu_op_reg = 3'd0;
+									
+									G_in = 1'd1;
+								end
+								
+								3'd3: begin
+									sel_reg = {1'd0, output_IR[2:0]};
+									alu_op_reg = 3'd2;
+									
+									G_in = 1'd1;
+								end
+								
+								3'd7: ; // idle
+								
 							  endcase
 						  
                 end
@@ -269,10 +302,23 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 								3'd1: begin
 						  
 								  // G placed onto bus
-								  sel_wire = 4'd8; // kinda hard coded here
+								  sel_reg = 4'd8; // kinda hard coded here
 								  // value enters Rx as it is enabled
-								  R_in[din_tick[5:3]] = 1'b1; 
+								  R_in[output_IR[5:3]] = 1'b1; 
 								  end
+								  
+								3'd2: begin
+									sel_reg = 4'd8;
+									R_in[output_IR[5:3]] = 1'b1; 
+								end
+								
+								3'd3: begin
+									sel_reg = 4'd8;
+									R_in[output_IR[5:3]] = 1'b1;
+								end
+								
+								3'd7: ; // idle
+								
 							endcase
 						  
                 end
