@@ -13,7 +13,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 input [0:0] clk;
 	 input [0:0] rst;
 	 input [8:0] din;
-	 output [15:0] R0;
+	 output [3:0] R0;
 	 output [15:0] R1;
 	 output [15:0] R2;
 	 output [15:0] R3;
@@ -23,6 +23,8 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 output [15:0] R7;
 	 
 	 output [15:0] bus; // check
+	 
+	 assign R0 = tick_fsm_out;
 
 
     // TODO: declare wires:
@@ -198,7 +200,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		  G_in = 1'b0;
 		  alu_op_reg = 3'd7; // 3'b111 is default 0's as alu output
 		  IR_in = 1'b0;
-		  sel_reg = 3'b000;
+		  sel_reg = 4'b1111;
 
 
         // TODO: Turn on specific control signals based on current tick:
