@@ -42,22 +42,24 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 
 	 wire [15:0] alu_in_A;
 	 wire [15:0] alu_in_B;
-	 wire [15:0] alu_op_wire;
 	 wire [15:0] alu_out;
 	 wire [3:0] tick_fsm_out;
 	 wire [15:0] bus_wire;
 	 wire [3:0] sel_wire;
+	 
 	 reg [8:0] din_tick;
 	 
+	 reg [2:0] alu_op_reg;
 	 reg G_in;
 	 reg A_in;
 	 reg [7:0] R_in;
+	 reg IR_in;
     
 
     // TODO: instantiate registers:
 	 register_n #(.N(9)) reg_IR(
-		.data_in(din_tick),
-		.r_in(1), 
+		.data_in(din),
+		.r_in(IR_in), 
 		.clk(clk), 
 		.Q(output_IR), 
 		.rst(rst)
@@ -165,8 +167,8 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
     // TODO: instantiate ALU:
 	 ALU ins0 (
 		.input_a(output_A),
-		.input_b(alu_in_B),
-		.alu_op(alu_op_wire),
+		.input_b(bus_wire),
+		.alu_op(alu_op_reg),
 		.result(alu_out_wire)
 	);
     
@@ -188,11 +190,13 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
     
     // input to control unit -> current instruction and tick FSM output
     // TODO: define control unit:
-    always @(tick_fsm_out || output_IR) begin
+    always @(tick_fsm_out, output_IR) begin
         // TODO: Turn off all control signals:
 		  R_in = 8'b0;
 		  A_in = 1'b0;
 		  G_in = 1'b0;
+		  alu_op = 3'd7; // 3'b111 is default 0's as alu output
+		  IR_in = 1'b0;
 
 
         // TODO: Turn on specific control signals based on current tick:
@@ -206,22 +210,26 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 						 eg. 23 + 11 -> lets say Rx = R0 and Ry = R1
 						 instruction is 001 000 001 from IR
 						 */
-						din_tick = din;
-						
+						 IR_in = 1'b1;
                 end
             
             /* Tick 2 */
 				4'b0010:
-                begin
+					begin
                     // TODO
 						  /*
 						  value of Rx (23) placed onto bus
 						  store bus value into reg A
 						  assume rx = r0, ry = r1
 						  */
-						  A_in = 1'b1;
-						  sel_wire = {1'b0, din_tick[5:3]}; // only works for r0 to r7
+						case (output_IR[8:6]) 
+							// addition store into A
+							3'd1: begin
+								A_in = 1'b1;
+								sel_wire = {1'b0, output_IR[5:3]};
+							end
 						  
+						endcase
 						  
                 end
             
@@ -235,10 +243,16 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 						  addition
 						  reg G stores result
 						  */
-						  sel_wire = {1'b0, din_tick[5:3]};
-						  G_in = 1'b1; // store result in reg G
 						  
+						  case (output_IR[8:6]) 
 						  
+							  3'd1: begin
+									sel_wire = {1'b0, din_tick[2:0]};
+									alu_op_reg = 3'd0;
+							  
+									G_in = 1'b1; // store result in reg G
+								end
+							  endcase
 						  
                 end
             
@@ -250,10 +264,16 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 						  value in reg G is placed onto the bus
 						  */
 						  
-						  // G placed onto bus
-						  sel_wire = 4'd8; // kinda hard coded here
-						  // value enters Rx as it is enabled
-						  R_in[din_tick[5:3]] = 1'b1;
+						  case (output_IR[8:6])
+						  
+								3'd1: begin
+						  
+								  // G placed onto bus
+								  sel_wire = 4'd8; // kinda hard coded here
+								  // value enters Rx as it is enabled
+								  R_in[din_tick[5:3]] = 1'b1; 
+								  end
+							endcase
 						  
                 end
             
