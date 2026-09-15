@@ -45,11 +45,18 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 wire [15:0] alu_op_wire;
 	 wire [15:0] alu_out;
 	 wire [3:0] tick_fsm_out;
+	 wire [15:0] bus_wire;
+	 wire [3:0] sel_wire;
+	 reg [8:0] din_tick;
+	 
+	 reg G_in;
+	 reg A_in;
+	 reg [7:0] R_in;
     
 
     // TODO: instantiate registers:
 	 register_n #(.N(9)) reg_IR(
-		.data_in(din),
+		.data_in(din_tick),
 		.r_in(1), 
 		.clk(clk), 
 		.Q(output_IR), 
@@ -57,64 +64,64 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		);
 		
 	register_n #(.N(16)) reg_R0(
-		data_in,
-		.r_in(1), 
+		.data_in(bus_wire),
+		.r_in(R_in[0]), 
 		.clk(clk), 
 		.Q(output_R0), 
 		.rst(rst)
 		);
 		
 	register_n #(.N(16)) reg_R1(
-		data_in,
-		.r_in(1), 
+		.data_in(bus_wire),
+		.r_in(R_in[1]), 
 		.clk(clk), 
 		.Q(output_R1), 
 		.rst(rst)
 		); 
 		
 	register_n #(.N(16)) reg_R2(
-		data_in,
-		r_in, 
+		.data_in(bus_wire),
+		.r_in(R_in[2]), 
 		.clk(clk), 
 		.Q(output_R2), 
 		.rst(rst)
 		); 
 
 	register_n #(.N(16)) reg_R3(
-		data_in,
-		r_in, 
+		.data_in(bus_wire),
+		.r_in(R_in[3]), 
 		.clk(clk), 
 		.Q(output_R3), 
 		.rst(rst)
 		); 
 
 	register_n #(.N(16)) reg_R4(
-		data_in,
-		r_in, 
+		.data_in(bus_wire),
+		.r_in(R_in[4]), 
 		.clk(clk), 
 		.Q(output_R4), 
 		.rst(rst)
 		); 
 
 	register_n #(.N(16)) reg_R5(
-		data_in,
-		r_in, 
+		.data_in(bus_wire),
+		.r_in(R_in[5]), 
 		.clk(clk), 
 		.Q(output_R5), 
 		.rst(rst)
 		); 
 
 	register_n #(.N(16)) reg_R6(
-		data_in,
-		r_in, 
+		.data_in(bus_wire),
+		.r_in(R_in[6]), 
 		.clk(clk), 
 		.Q(output_R6), 
 		.rst(rst)
 		); 
 
 	register_n #(.N(16)) reg_R7(
-		data_in,
-		r_in, 
+		.data_in(bus_wire),
+		.r_in(R_in[7]), 
 		.clk(clk), 
 		.Q(output_R7), 
 		.rst(rst)
@@ -122,7 +129,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		
 	register_n #(.N(16)) reg_G(
 		.data_in(alu_out_wire)
-		r_in, 
+		.r_in(G_in), 
 		.clk(clk), 
 		.Q(output_G),
 		.rst(rst)
@@ -130,8 +137,8 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	
 	// intermediate calculation here?
 	register_n #(.N(16)) reg_A(
-		.data_in,
-		r_in, 
+		.data_in(bus_wire),
+		.r_in(A_in), 
 		.clk(clk), 
 		.Q(output_A), 
 		.rst(rst)
@@ -150,17 +157,17 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		.R6(output_R6),
 		.R7(output_R7),
 		.G(output_G),
-		.sel(),
-		.Bus(bus)
+		.sel(sel_wire),
+		.Bus(bus_wire)
 	);
     
     
     // TODO: instantiate ALU:
 	 ALU ins0 (
-		.input_a(alu_in_A),
+		.input_a(output_A),
 		.input_b(alu_in_B),
 		.alu_op(alu_op_wire),
-		.result(alu_out)
+		.result(alu_out_wire)
 	);
     
     
@@ -183,6 +190,9 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
     // TODO: define control unit:
     always @(tick_fsm_out || output_IR) begin
         // TODO: Turn off all control signals:
+		  R_in = 8'b0;
+		  A_in = 1'b0;
+		  G_in = 1'b0;
 
 
         // TODO: Turn on specific control signals based on current tick:
@@ -190,25 +200,61 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
             /* Tick 1 */
 				4'b0001:
                 begin
-                    // TODO
+                   /* TODO
+						 addition of two registers
+						 Rx = Rx + Ry
+						 eg. 23 + 11 -> lets say Rx = R0 and Ry = R1
+						 instruction is 001 000 001 from IR
+						 */
+						din_tick = din;
+						
                 end
             
             /* Tick 2 */
 				4'b0010:
                 begin
                     // TODO
+						  /*
+						  value of Rx (23) placed onto bus
+						  store bus value into reg A
+						  assume rx = r0, ry = r1
+						  */
+						  A_in = 1'b1;
+						  sel_wire = {1'b0, din_tick[5:3]}; // only works for r0 to r7
+						  
+						  
                 end
             
             /* Tick 3 */
 				4'b0100:
                 begin
                     // TODO
+						  /*
+						  value in ry is placed onto bus
+						  alu calculates value in reg A and bus wire
+						  addition
+						  reg G stores result
+						  */
+						  sel_wire = {1'b0, din_tick[5:3]};
+						  G_in = 1'b1; // store result in reg G
+						  
+						  
+						  
                 end
             
             /* Tick 4 */
 				4'b1000:
                 begin
                     // TODO
+						  /*
+						  value in reg G is placed onto the bus
+						  */
+						  
+						  // G placed onto bus
+						  sel_wire = 4'd8; // kinda hard coded here
+						  // value enters Rx as it is enabled
+						  R_in[din_tick[5:3]] = 1'b1;
+						  
                 end
             
             default:
