@@ -1,0 +1,223 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/ziggy/Documents/ECE2072/Project/simulation/modelsim
+vALU
+Z1 !s110 1789526186
+!i10b 1
+!s100 d`ePNPKmNV;YMW??WNa<]1
+II^nUEW1Bi8<DGN3_DoUE11
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+Z3 w1789515178
+Z4 8C:/Users/ziggy/Documents/ECE2072/Project/components.v
+Z5 FC:/Users/ziggy/Documents/ECE2072/Project/components.v
+L0 124
+Z6 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z7 !s108 1789526186.000000
+Z8 !s107 C:/Users/ziggy/Documents/ECE2072/Project/components.v|
+Z9 !s90 -reportprogress|300|-work|work|C:/Users/ziggy/Documents/ECE2072/Project/components.v|
+!i113 1
+Z10 o-work work
+Z11 tCvgOpt 0
+n@a@l@u
+vbinary_to_bcd
+R1
+!i10b 1
+!s100 kaGz0dCdj:6CO]k1hOVJO0
+InGBihe>ZSDTC6SYmhcL@81
+R2
+R0
+Z12 w1789521447
+Z13 8C:/Users/ziggy/Documents/ECE2072/Project/bcd_display_rx.v
+Z14 FC:/Users/ziggy/Documents/ECE2072/Project/bcd_display_rx.v
+L0 5
+R6
+r1
+!s85 0
+31
+Z15 !s108 1789526185.000000
+Z16 !s107 C:/Users/ziggy/Documents/ECE2072/Project/bcd_display_rx.v|
+Z17 !s90 -reportprogress|300|-work|work|C:/Users/ziggy/Documents/ECE2072/Project/bcd_display_rx.v|
+!i113 1
+R10
+R11
+vcomponents_tb
+R1
+!i10b 1
+!s100 <3Z4Y2kgRBY;@P`bSPZ8^0
+I4RL6kNcR6nFD2oGN5HZ5X3
+R2
+R0
+w1789365858
+8C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v
+FC:/Users/ziggy/Documents/ECE2072/Project/components_tb.v
+Z18 L0 11
+R6
+r1
+!s85 0
+31
+R7
+!s107 C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v|
+!s90 -reportprogress|300|-work|work|C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v|
+!i113 1
+R10
+R11
+vDELETE_tick_skip_tb
+R1
+!i10b 1
+!s100 C9^mFLcPeTCc9F:3IZJL^1
+I5[fa_O624D:^f57]BoUQY3
+R2
+R0
+w1789525893
+8C:/Users/ziggy/Documents/ECE2072/Project/DELETE_tick_skip_tb.v
+FC:/Users/ziggy/Documents/ECE2072/Project/DELETE_tick_skip_tb.v
+L0 1
+R6
+r1
+!s85 0
+31
+R7
+!s107 C:/Users/ziggy/Documents/ECE2072/Project/DELETE_tick_skip_tb.v|
+!s90 -reportprogress|300|-work|work|C:/Users/ziggy/Documents/ECE2072/Project/DELETE_tick_skip_tb.v|
+!i113 1
+R10
+R11
+n@d@e@l@e@t@e_tick_skip_tb
+vfsm_state_hex_decoder
+R1
+!i10b 1
+!s100 PRkV6?ESTlWgWokgOaJm=2
+I[@Z;lh3<jAn]Sl3A1NS5L2
+R2
+R0
+w1789520096
+8C:/Users/ziggy/Documents/ECE2072/Project/fsm_state_hex_decoder.v
+FC:/Users/ziggy/Documents/ECE2072/Project/fsm_state_hex_decoder.v
+L0 1
+R6
+r1
+!s85 0
+31
+R7
+!s107 C:/Users/ziggy/Documents/ECE2072/Project/fsm_state_hex_decoder.v|
+!s90 -reportprogress|300|-work|work|C:/Users/ziggy/Documents/ECE2072/Project/fsm_state_hex_decoder.v|
+!i113 1
+R10
+R11
+vmultiplexer
+R1
+!i10b 1
+!s100 fHDAn^OVGIQLo`_n>[1ce0
+I>Qd7lk];c7JD0Q1ZBIdHE2
+R2
+R0
+R3
+R4
+R5
+L0 75
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 1
+R10
+R11
+vregister_n
+R1
+!i10b 1
+!s100 ?1^;>89bTL^BS9>BYejke2
+Ieh^MV<RgTPeb0M_GGo`zC1
+R2
+R0
+R3
+R4
+R5
+L0 173
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 1
+R10
+R11
+vseven_seg_display
+R1
+!i10b 1
+!s100 OMTz9cMFCHm2;S7_@`cDI0
+IXaceFI^A87PF:M5CIR5oV0
+R2
+R0
+R12
+R13
+R14
+L0 66
+R6
+r1
+!s85 0
+31
+R15
+R16
+R17
+!i113 1
+R10
+R11
+vsign_extend
+R1
+!i10b 1
+!s100 ?G]`i>S:BSWAAfW=E=1i13
+Id`_3[>AmYRRHnc3gk=f1;2
+R2
+R0
+R3
+R4
+R5
+R18
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 1
+R10
+R11
+vtick_FSM
+R1
+!i10b 1
+!s100 a:GSkn7F?6POe7TFKW7`;3
+IWPjE>5foH]CRKDV]Ba6R=1
+R2
+R0
+R3
+R4
+R5
+L0 27
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 1
+R10
+R11
+ntick_@f@s@m

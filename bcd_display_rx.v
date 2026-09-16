@@ -74,10 +74,10 @@ module seven_seg_display (
 			4'd0: segment = {1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}; // 6 5 4 3 2 1 0
 			4'd1: segment = {1'b1, 1'b1, 1'b1, 1'b1, 1'b0, 1'b0, 1'b1};
 			4'd2: segment = {1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0};
-			4'd3: segment = {1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
+			4'd3: segment = {1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0};
 			4'd4: segment = {1'b0, 1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b1};
 			4'd5: segment = {1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0};
-			4'd6: segment = {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b1};
+			4'd6: segment = {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0};
 			4'd7: segment = {1'b1, 1'b1, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0};
 			4'd8: segment = {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
 			4'd9: segment = {1'b0, 1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0};

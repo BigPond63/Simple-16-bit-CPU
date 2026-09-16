@@ -35,7 +35,7 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
 	 output [15:0] bus; // check
 	 output [15:0] display;
 	 
-	 assign R0 = tick_fsm_out;
+	 
 
 
     // TODO: declare wires:
@@ -75,6 +75,7 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
 	 
     assign display = output_H;
 	 assign bus = bus_wire;
+	 assign R0 = tick_fsm_out;
 
     // TODO: instantiate registers:
 	 register_n #(.N(9)) reg_IR(
