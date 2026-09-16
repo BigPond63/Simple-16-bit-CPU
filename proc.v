@@ -42,6 +42,8 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 wire [15:0] output_A;
 	 wire [8:0] output_IR;
 	 
+
+	 
 	 wire [15:0] alu_in_A;
 	 wire [15:0] alu_in_B;
 	 wire [15:0] alu_out_wire;
@@ -56,6 +58,8 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 	 reg A_in;
 	 reg [7:0] R_in;
 	 reg IR_in;
+
+	 
     
 	 assign bus = bus_wire;
 
@@ -147,7 +151,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7);
 		.clk(clk), 
 		.Q(output_A), 
 		.rst(rst)
-		); 
+		);
     
     
     // TODO: instantiate Multiplexer:

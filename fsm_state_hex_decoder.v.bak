@@ -1,0 +1,10 @@
+module fsm_state_hex_decoder (
+	input [3:0] state,
+	output reg [6:0] segment
+
+);
+
+	always @(*) begin
+		
+	
+	end
