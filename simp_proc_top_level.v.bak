@@ -1,0 +1,25 @@
+module simp_proc_top_level (
+	input [8:0] SW,
+	input [1:0] KEY,
+	output [9:0] LEDR
+	
+	);
+	
+
+simple_proc proc_ins0 (
+	.clk(~KEY[1]),
+	.rst(~KEY[0]),
+	.enable(1'b1),
+	.din(SW[8:0]),
+	.bus(bus_wire),
+	.R0(fsm_state)
+);
+
+
+	
+	
+
+	
+	
+endmodule
+	

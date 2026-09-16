@@ -1,5 +1,5 @@
 module proc_top_level (
-	input [8:0] SW,
+	input [9:0] SW,
 	input [1:0] KEY,
 	output [9:0] LEDR,
 	
@@ -36,21 +36,14 @@ assign HEX0_wire = bcd_wire[3:0];
 proc_extension proc_ext_ins0 (
 	.clk(~KEY[1]),
 	.rst(~KEY[0]),
+	.enable(SW[9]),
 	.din(SW[8:0]),
 	.bus(bus_wire),
 	.R0(fsm_state),
 	.display(display_wire)
 );
 
-/*
-simple_proc proc_ins0 (
-	.clk(~KEY[1]),
-	.rst(~KEY[0]),
-	.din(SW[8:0]),
-	.bus(bus_wire),
-	.R0(fsm_state)
-);
-*/
+
 
 /*
 hex_real hex_ins0 (
