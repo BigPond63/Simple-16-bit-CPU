@@ -17,6 +17,7 @@ module binary_to_bcd (
 	
 	*/
 	reg [35:0] scratch_space;
+	reg [15:0] magnitude;
 	
 	assign bcd = scratch_space[35:16];
 	
@@ -24,9 +25,21 @@ module binary_to_bcd (
 	integer i;
 	
 	always @(*) begin
-		// iterate n times (16)
+		// reset so verilog doesn't infer latch
 		scratch_space = 36'b0;
-		scratch_space[15:0] = binary;
+		magnitude = 16'b0;
+
+		
+		// check that the number is negative
+		if (binary[15] == 1) begin
+			magnitude = ~binary + 1;
+		end else begin
+			magnitude = binary;
+		end
+		
+		
+		scratch_space[15:0] = magnitude;
+		
 		
 		for (i=0; i<16; i=i+1) begin
 			// check top four bits [39:36]
@@ -65,22 +78,23 @@ endmodule
 
 module seven_seg_display (
 	input [3:0] display,
-	output reg [6:0] segment
+	input [0:0] sign,
+	output reg [7:0] segment
 );
 
 	always @(*) begin
 		case (display)
-			default: segment = 7'b0;
-			4'd0: segment = {1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}; // 6 5 4 3 2 1 0
-			4'd1: segment = {1'b1, 1'b1, 1'b1, 1'b1, 1'b0, 1'b0, 1'b1};
-			4'd2: segment = {1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0};
-			4'd3: segment = {1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0};
-			4'd4: segment = {1'b0, 1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b1};
-			4'd5: segment = {1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0};
-			4'd6: segment = {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0};
-			4'd7: segment = {1'b1, 1'b1, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0};
-			4'd8: segment = {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
-			4'd9: segment = {1'b0, 1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0};
+			default: segment = 8'b1;
+			4'd0: segment = {~sign, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}; // 7 6 5 4 3 2 1 0
+			4'd1: segment = {~sign, 1'b1, 1'b1, 1'b1, 1'b1, 1'b0, 1'b0, 1'b1};
+			4'd2: segment = {~sign, 1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0};
+			4'd3: segment = {~sign, 1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0};
+			4'd4: segment = {~sign, 1'b0, 1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b1};
+			4'd5: segment = {~sign, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0};
+			4'd6: segment = {~sign, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0};
+			4'd7: segment = {~sign, 1'b1, 1'b1, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0};
+			4'd8: segment = {~sign, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
+			4'd9: segment = {~sign, 1'b0, 1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0};
 		endcase
 	end
 endmodule

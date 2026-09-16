@@ -3,12 +3,12 @@ module proc_top_level (
 	input [1:0] KEY,
 	output [9:0] LEDR,
 	
-	output [6:0] HEX0,
-	output [6:0] HEX1,
-	output [6:0] HEX2,
-	output [6:0] HEX3,
-	output [6:0] HEX4,
-	output [6:0] HEX5
+	output [7:0] HEX0,
+	output [7:0] HEX1,
+	output [7:0] HEX2,
+	output [7:0] HEX3,
+	output [7:0] HEX4,
+	output [7:0] HEX5
 );
 
 
@@ -69,31 +69,37 @@ binary_to_bcd bcd_ins0 (
 
 seven_seg_display HEX0_ins0 (
 	.display(HEX0_wire),
+	.sign(display_wire[15]),
 	.segment(HEX0)
 );
 
 seven_seg_display HEX1_ins0 (
 	.display(HEX1_wire),
+	.sign(display_wire[15]),
 	.segment(HEX1)
 );
 
 seven_seg_display HEX2_ins0 (
 	.display(HEX2_wire),
+	.sign(display_wire[15]),
 	.segment(HEX2)
 );
 
 seven_seg_display HEX3_ins0 (
 	.display(HEX3_wire),
+	.sign(display_wire[15]),
 	.segment(HEX3)
 );
 
 seven_seg_display HEX4_ins0 (
 	.display(HEX4_wire),
+	.sign(display_wire[15]),
 	.segment(HEX4)
 );
 
 fsm_state_hex_decoder fsm_hex_ins0 (
 	.state(fsm_state),
+	.sign(display_wire[15]),
 	.segment(HEX5)
 );
 

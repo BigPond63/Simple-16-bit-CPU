@@ -151,11 +151,11 @@ module ALU (input_a, input_b, alu_op, result);
 			3'b011: begin // shift logic here
 			
 				
-			
+			// be careful of signed shift causing a wrap around
 				if (input_a[15] == 1) begin
 					// shift right (MSB neg)
 					shift_amount = ~input_a + 1;
-					result_reg = input_b >> shift_amount;
+					result_reg = $signed(input_b) >>> shift_amount; // use signed shift operator to preserve sign
 					
 					end else begin
 						// shift left (MSB pos)
