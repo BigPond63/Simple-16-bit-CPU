@@ -75,6 +75,8 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 	 reg IR_in;
 	 reg H_in;
 	 reg PC_in;
+	 
+	 reg [15:0] PC_address = 16'b0;
 
 	 
     assign display = output_H;
@@ -179,8 +181,8 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 		.rst(rst)
 		);
 
-	register_n #(.N(16)) reg_PC(
-		.data_in(bus_wire),
+	register_n #(.N(16)) reg_PC( // 2^16 words allowed -> that many instructions
+		.data_in(PC_address),
 		.r_in(PC_in), 
 		.clk(clk), 
 		.Q(output_PC), 
@@ -240,6 +242,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 		  IR_in = 1'b0;
 		  sel_reg = 4'b1111;
 		  H_in = 1'b0;
+		  PC_in = 1'b0;
 
 
         // TODO: Turn on specific control signals based on current tick:
@@ -296,6 +299,11 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 							3'd5: begin
 								A_in = 1'b1;
 								sel_reg = 4'd9;
+							end
+							
+							3'd6: begin
+								A_in = 1'b1; // place into reg A
+								sel_reg = 4'd9; // immediate value for bez
 							end
 							
 							3'd7: begin
@@ -358,6 +366,17 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 									G_in = 1'd1;
 								end
 								
+								3'd6: begin
+									
+									sel_reg = {1'd0, output_IR[5:3]}; // get reg contents see if 0
+									if (bus_wire == 16'b0) begin
+										PC_in = 1'b1;
+										PC_address = PC_address + 2 + output_A;
+									end
+										
+									
+								end
+								
 								3'd7: ; // idle
 								
 							  endcase
@@ -402,6 +421,11 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 									sel_reg = 4'd8;
 									R_in[output_IR[5:3]] = 1'b1; // rx
 								end
+								
+								3'd6: ; // idle branch
+									
+								
+								
 								
 								3'd7: ; // idle
 								

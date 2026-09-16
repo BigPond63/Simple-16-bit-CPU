@@ -434,3 +434,5 @@ set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_
 set_global_assignment -name VERILOG_FILE proc_memory.v
 set_global_assignment -name QIP_FILE ROM1P_Q9_32768.qip
 set_global_assignment -name QIP_FILE ROM1P_Q9_65536.qip
+set_global_assignment -name VERILOG_FILE memory_top_level.v
+set_global_assignment -name VERILOG_FILE test_IP.v
