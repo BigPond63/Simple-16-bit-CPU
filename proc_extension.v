@@ -281,6 +281,11 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
 								sel_reg = {1'b0, output_IR[5:3]};
 							end
 							
+							3'd5: begin
+								A_in = 1'b1;
+								sel_reg = 4'd9;
+							end
+							
 							3'd7: begin
 								sel_reg = 4'd9;
 								R_in[output_IR[5:3]] = 1'b1; // activate Rx
@@ -335,6 +340,12 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
 									G_in = 1'd1;
 								end
 								
+								3'd5: begin
+									sel_reg = {1'd0, output_IR[5:3]};
+									alu_op_reg = 3'd3;
+									G_in = 1'd1;
+								end
+								
 								3'd7: ; // idle
 								
 							  endcase
@@ -371,6 +382,11 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
 								end
 								
 								3'd4: begin
+									sel_reg = 4'd8;
+									R_in[output_IR[5:3]] = 1'b1; // rx
+								end
+								
+								3'd5: begin
 									sel_reg = 4'd8;
 									R_in[output_IR[5:3]] = 1'b1; // rx
 								end

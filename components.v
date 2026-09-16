@@ -133,6 +133,7 @@ module ALU (input_a, input_b, alu_op, result);
 	output [15:0] result;
 	
 	reg [15:0] result_reg;
+	reg [15:0] shift_amount;
 	
 	assign result = result_reg;
 	
@@ -142,21 +143,25 @@ module ALU (input_a, input_b, alu_op, result);
 	*/
 	// TODO: Implement ALU Logic:
 	always @(*) begin
+		shift_amount = 16'b0;
 		case (alu_op)
 			3'b000: result_reg = input_a * input_b; // doesn't account for overflow or maybe neg
 			3'b001: result_reg = input_a + input_b;
 			3'b010: result_reg = input_a - input_b;
 			3'b011: begin // shift logic here
 			
-				if (input_a[15] == 1) 
-					// shift right (MSB neg)
-					result_reg = input_b >> input_a;
-					
-				else
-					// shift left (MSB pos)
-					result_reg = input_b << input_a;
+				
 			
-			end
+				if (input_a[15] == 1) begin
+					// shift right (MSB neg)
+					shift_amount = ~input_a + 1;
+					result_reg = input_b >> shift_amount;
+					
+					end else begin
+						// shift left (MSB pos)
+						result_reg = input_b << input_a;
+					end
+				end
 			
 			default: result_reg = 16'b0; // have to double check this
 		
