@@ -15,7 +15,7 @@ This file contains Verilog code to implement individual the CPU.
 Please enter your student ID:
 
 */
-module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display, enable);
+module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display, enable, pc_addr, fsm_tick);
 
     // Note: The skeleton you are provided with includes output ports to output the values of the internal registers R0 - R7, for the purpose of test benching. When instantiating the processor to program your DE10-lite, you can leave these ports unused.
 
@@ -36,6 +36,9 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 	 output [15:0] display;
 	 
 	 input [0:0] enable;
+	 
+	 output [3:0] fsm_tick;
+
 	 
 	 
 
@@ -77,11 +80,16 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 	 reg PC_in;
 	 
 	 reg [15:0] PC_address = 16'b0;
-
 	 
+	 output [15:0] pc_addr;
+	 
+	 
+	
+	 
+	 assign pc_addr = PC_address;
     assign display = output_H;
 	 assign bus = bus_wire;
-	 assign R0 = tick_fsm_out;
+	 assign fsm_tick = tick_fsm_out;
 
     // TODO: instantiate registers:
 	 register_n #(.N(9)) reg_IR(
@@ -190,7 +198,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 		);
     
     // TODO: instantiate Multiplexer:
-	 multiplexer mux_ins0 (
+	 multiplexer_pc mux_pc_ins0 (
 		.SignExtDin(sign_ext_output),
 		.R0(output_R0),
 		.R1(output_R1),
@@ -202,7 +210,8 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 		.R7(output_R7),
 		.G(output_G),
 		.sel(sel_reg),
-		.Bus(bus_wire)
+		.Bus(bus_wire),
+		.pc(output_PC)
 	);
     
     
@@ -233,7 +242,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
     
     // input to control unit -> current instruction and tick FSM output
     // TODO: define control unit:
-    always @(tick_fsm_out || output_IR) begin
+    always @(tick_fsm_out or output_IR or enable) begin
         // TODO: Turn off all control signals:
 		  R_in = 8'b0;
 		  A_in = 1'b0;
@@ -244,7 +253,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 		  H_in = 1'b0;
 		  PC_in = 1'b0;
 
-
+		if (enable) begin
         // TODO: Turn on specific control signals based on current tick:
         case (tick_fsm_out)
             /* Tick 1 */
@@ -271,42 +280,50 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 						case (output_IR[8:6]) 
 							// addition store into A
 							
-							3'd0: begin
+							3'd0: begin // disp
 								H_in = 1'b1;
 								sel_reg = {1'b0, output_IR[5:3]};
 							end
 							
-							3'd1: begin
+							3'd1: begin // add
 								A_in = 1'b1;
 								sel_reg = {1'b0, output_IR[5:3]};
 							end
 							
-							3'd2: begin
+							3'd2: begin // addi
+								PC_in = 1'b1;
+								PC_address = output_PC + 1;
 								A_in = 1'b1;
 								sel_reg = 4'd9; // selection for the sign ext din
 							end
 							
-							3'd3: begin
+							3'd3: begin // sub
 								A_in = 1'b1;
 								sel_reg = {1'b0, output_IR[5:3]};
 							end
 							
-							3'd4: begin
+							3'd4: begin // mul
 								A_in = 1'b1;
 								sel_reg = {1'b0, output_IR[5:3]};
 							end
 							
-							3'd5: begin
+							3'd5: begin // ssi
+								PC_in = 1'b1;
+								PC_address = output_PC + 1'd1;
 								A_in = 1'b1;
 								sel_reg = 4'd9;
 							end
 							
-							3'd6: begin
+							3'd6: begin // bez
+								PC_in = 1'b1;
+								PC_address = output_PC + 1;
 								A_in = 1'b1; // place into reg A
 								sel_reg = 4'd9; // immediate value for bez
 							end
 							
-							3'd7: begin
+							3'd7: begin // movi
+								PC_in = 1'b1;
+								PC_address = output_PC + 1;
 								sel_reg = 4'd9;
 								R_in[output_IR[5:3]] = 1'b1; // activate Rx
 							end
@@ -331,53 +348,63 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 						  case (output_IR[8:6]) 
 								default: ;
 								
-								3'd0: ;
-							  3'd1: begin
+								3'd0: begin // disp increment by 2
+									PC_in = 1'b1;
+									PC_address = output_PC + 2; 
+								end
+								
+							  3'd1: begin // add
 									sel_reg = {1'd0, output_IR[2:0]};
 									alu_op_reg = 3'd1;
 							  
 									G_in = 1'd1; // store result in reg G
 								end
 								
-								3'd2: begin
+								3'd2: begin // addi
 									sel_reg = {1'd0, output_IR[5:3]};
 									alu_op_reg = 3'd1;
 									
 									G_in = 1'd1;
 								end
 								
-								3'd3: begin
+								3'd3: begin // sub
 									sel_reg = {1'd0, output_IR[2:0]};
 									alu_op_reg = 3'd2;
 									
 									G_in = 1'd1;
 								end
 								
-								3'd4: begin
+								3'd4: begin // mul
 									sel_reg = {1'd0, output_IR[2:0]};
 									alu_op_reg = 3'd0;
 									
 									G_in = 1'd1;
 								end
 								
-								3'd5: begin
+								3'd5: begin // ssi
 									sel_reg = {1'd0, output_IR[5:3]};
 									alu_op_reg = 3'd3;
 									G_in = 1'd1;
 								end
 								
-								3'd6: begin
-									
+								3'd6: begin // bez
 									sel_reg = {1'd0, output_IR[5:3]}; // get reg contents see if 0
 									if (bus_wire == 16'b0) begin
 										PC_in = 1'b1;
-										PC_address = PC_address + 2 + output_A;
+										PC_address = output_PC + output_A + output_A + 1'd1;
+									end else begin
+										PC_in = 1'b1;
+										PC_address = output_PC + 1'd1;
 									end
 										
 									
 								end
 								
-								3'd7: ; // idle
+								3'd7: begin
+									PC_in = 1'b1;
+									PC_address = output_PC + 1'd1;
+									
+								end
 								
 							  endcase
 						  
@@ -393,41 +420,56 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 						  
 						  case (output_IR[8:6])
 								default: ;
-								3'd0: ;
-								3'd1: begin
+								3'd0: ; // disp
+								3'd1: begin // add
 						  
 								  // G placed onto bus
 								  sel_reg = 4'd8; // kinda hard coded here
 								  // value enters Rx as it is enabled
-								  R_in[output_IR[5:3]] = 1'b1; 
-								  end
+								  R_in[output_IR[5:3]] = 1'b1;
 								  
-								3'd2: begin
+								  PC_in = 1'b1;
+								  PC_address = output_PC + 2'd2;
+								end
+								  
+								3'd2: begin // addi
 									sel_reg = 4'd8;
 									R_in[output_IR[5:3]] = 1'b1; 
+									
+									PC_in = 1'b1;
+									PC_address = output_PC + 1'd1;
 								end
 								
-								3'd3: begin
+								3'd3: begin // sub
 									sel_reg = 4'd8; // g
 									R_in[output_IR[5:3]] = 1'b1; // rx
+									
+									PC_in = 1'b1;
+									PC_address = output_PC + 2'd2;
 								end
 								
-								3'd4: begin
+								3'd4: begin // mul
 									sel_reg = 4'd8;
 									R_in[output_IR[5:3]] = 1'b1; // rx
+									
+									PC_in = 1'b1;
+									PC_address = output_PC + 2'd2;
 								end
 								
-								3'd5: begin
+								3'd5: begin // ssi
 									sel_reg = 4'd8;
 									R_in[output_IR[5:3]] = 1'b1; // rx
+									
+									PC_in = 1'b1;
+									PC_address = output_PC + 1'd1;
 								end
 								
-								3'd6: ; // idle branch
+								3'd6: ; // idle branch, bez
 									
 								
 								
 								
-								3'd7: ; // idle
+								3'd7: ; // idle, movi
 								
 							endcase
 						  
@@ -441,5 +483,6 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
         endcase
 
     end
+	 end
 
 endmodule

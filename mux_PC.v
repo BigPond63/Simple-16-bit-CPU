@@ -1,0 +1,49 @@
+module multiplexer_pc(SignExtDin, R0, R1, R2, R3, R4, R5, R6, R7, G, sel, Bus, pc);
+	/* 
+	 * This module takes 10 inputs and places the correct input onto the bus.
+	 */
+	 
+	 // TODO: Declare inputs and outputs
+	 input [15:0] R0;
+	 input [15:0] R1;
+	 input [15:0] R2;
+	 input [15:0] R3;
+	 input [15:0] R4;
+	 input [15:0] R5;
+	 input [15:0] R6;
+	 input [15:0] R7;
+	 input [15:0] G;
+	 input [15:0] SignExtDin;
+	 input [3:0] sel;
+	 output [15:0] Bus;
+	 
+	 input [15:0] pc;
+	 
+	 reg [15:0] bus_reg;
+	 assign Bus = bus_reg;
+	 
+	
+	/*
+		ONLY ASSERTED IF ENABLE SIGNAL ON REGISTER IS 1
+		
+	*/
+	
+	// TODO: implement logic
+	always @(*) begin
+		case (sel) // assumed logic here
+			default: bus_reg = 16'b0;
+			4'b0000: bus_reg = R0;
+			4'b0001: bus_reg = R1;
+			4'b0010: bus_reg = R2;
+			4'b0011: bus_reg = R3;
+			4'b0100: bus_reg = R4;
+			4'b0101: bus_reg = R5;
+			4'b0110: bus_reg = R6;
+			4'b0111: bus_reg = R7;
+			4'b1000: bus_reg = G;
+			4'b1001: bus_reg = SignExtDin;
+			4'b1010: bus_reg = pc;
+		endcase
+	end
+
+endmodule

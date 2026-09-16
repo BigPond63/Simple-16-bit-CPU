@@ -154,6 +154,6 @@ endmodule
 // Retrieval info: GEN_FILE: TYPE_NORMAL ROM1P_Q9_65536.inc FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL ROM1P_Q9_65536.cmp FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL ROM1P_Q9_65536.bsf FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL ROM1P_Q9_65536_inst.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL ROM1P_Q9_65536_inst.v TRUE
 // Retrieval info: GEN_FILE: TYPE_NORMAL ROM1P_Q9_65536_bb.v TRUE
 // Retrieval info: LIB_FILE: altera_mf

@@ -39,7 +39,7 @@ proc_extension proc_ext_ins0 (
 	.enable(SW[9]),
 	.din(SW[8:0]),
 	.bus(bus_wire),
-	.R0(fsm_state),
+	.fsm_tick(fsm_state),
 	.display(display_wire)
 );
 
