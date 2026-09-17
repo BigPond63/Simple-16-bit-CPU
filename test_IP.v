@@ -62,7 +62,14 @@ proc_memory memory_ins0(
 	.fsm_tick(fsm_state)
 	
 );
+/*
 clock_div_10hz clock10hz (
+	.clk(CLOCK_50),
+	.tick(tick)
+);
+*/
+
+clock_div_4hz clock4hz (
 	.clk(CLOCK_50),
 	.tick(tick)
 );
