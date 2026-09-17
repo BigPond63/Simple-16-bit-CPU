@@ -71,6 +71,7 @@ def process_line(lineText: str, lineNum: int) -> tuple[List[str] | None, int]:
         # Labels are pre-processed, so we can just return
         return (None, lineNum)
 
+
     # Get the opcode
     opcode = OPCODES[line[0]]
 
@@ -84,6 +85,8 @@ def process_line(lineText: str, lineNum: int) -> tuple[List[str] | None, int]:
 
     if arg1 not in REGISTERS:
         assert ValueError(f"Compilation Failed: Invalid First Argument: \"{lineText}\"")
+
+
 
     # If its a register instructionType instruction
     if instructionType == 1:        

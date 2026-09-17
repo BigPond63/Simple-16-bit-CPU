@@ -1,0 +1,5 @@
+start:
+    movi r1, 1
+    movi r2, 2
+end:
+    bez r0, end
