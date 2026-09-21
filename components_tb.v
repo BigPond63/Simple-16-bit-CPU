@@ -35,11 +35,12 @@ module components_tb;
 			- reset cycle only
 			- test who wins -> enable resest
 			
-			- reset alone, confirm 0001 is the state
-			- enable alone, confirm it cycles through all states
-			- do reset and enable simultaneously
+			- reset alone, confirm 0001 is the state (check each time), reset from all states 
+			- enable alone, confirm it cycles through all states (wraparound too)
+			- do reset and enable simultaneously -> rst should win, check all states 
 			- check illegal states
-			- test with and without clock
+			- test with and without clock 
+				- en -> 0, clk =1
 				
 				
 		
