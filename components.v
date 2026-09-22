@@ -24,7 +24,7 @@ endmodule
 
 
 // ok
-module tick_FSM(rst, clk, enable, tick);
+module tick_FSM(rst, clk, enable, tick);	
 	/* 
 	 * This module implements a tick FSM that will be used to
 	 * control the actions of the control unit
