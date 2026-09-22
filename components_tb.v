@@ -60,6 +60,9 @@ module components_tb;
 			- 1111
 	 
 	 */
+	 
+endmodule
+
 module fsm_tb;
 	// REGISTERS SHOULD BE INPUTS
 	// OUTPUTS SHOULD BE WIRES -> TO TEST
@@ -71,7 +74,7 @@ module fsm_tb;
 
 	wire [3:0] tick_fsm;
 	
-	reg [3:0] exp [vectorsize];
+	reg [3:0] exp [0:0]; //vectorsize];
 	
 	
 	// instantiate module to test DUT
@@ -88,7 +91,6 @@ module fsm_tb;
 		rst_fsm = 1'd0;
 		clk_fsm = 1'd0;
 		en_fsm = 1'd0;
-		tick_fsm = 1'd0;
 	end
 	
 	
@@ -248,8 +250,6 @@ module sign_ext_tb;
 	 reg [8:0] data;
 	 wire [15:0] ext_output;
 	 
-	 reg // rst test case
-	 reg // 
 	 
 	 
 	 // Instantiate Module
@@ -329,4 +329,3 @@ module sign_ext_tb;
     end
 
 endmodule
-
