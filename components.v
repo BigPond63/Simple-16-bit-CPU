@@ -155,8 +155,6 @@ module ALU (input_a, input_b, alu_op, result);
 				if (input_a[15] == 1) begin
 					// shift right (MSB neg)
 
-					shift_amount = ~input_a + 16'd1;
-
 					shift_amount = ~input_a + 16'd1; // Get 2's complement negation
 					result_reg = $signed(input_b) >>> shift_amount; // use signed shift operator to preserve sign
 					

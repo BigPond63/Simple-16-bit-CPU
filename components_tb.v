@@ -60,6 +60,86 @@ module components_tb;
 			- 1111
 	 
 	 */
+module fsm_tb;
+	// REGISTERS SHOULD BE INPUTS
+	// OUTPUTS SHOULD BE WIRES -> TO TEST
+	
+	// initialise varaibles
+	reg [0:0] rst_fsm;
+	reg [0:0] clk_fsm;
+	reg [0:0] en_fsm;
+
+	wire [3:0] tick_fsm;
+	
+	reg [3:0] exp [vectorsize];
+	
+	
+	// instantiate module to test DUT
+	tick_FSM DUT_fsm(
+		.rst(rst_fsm),
+		.clock(clk_fsm),
+		.enable(en_fsm),
+		.tick(tick_fsm)
+	);
+	
+
+	// initial inputs
+	initial begin
+		rst_fsm = 1'd0;
+		clk_fsm = 1'd0;
+		en_fsm = 1'd0;
+		tick_fsm = 1'd0;
+	end
+	
+	
+	// increment loop
+	always begin
+		#12
+		
+		forever begin
+			#5
+			clk_fsm = ~clk_fsm;
+		end
+		
+	end
+	
+	// test that reset works
+	
+	// test all enable , cycling states
+	// alternating patterns
+	// special cases
+		// en and rst together
+	// no clk, en
+	// test illegal states -> must fall to 0001
+	
+	
+	// create tb stats
+	
+	
+	// test the DUT and do counter/ erro checking etc.
+	
+	/*
+	each separate test case do a for loop
+	
+	first - test that reset works, so state should be 0001 -> make sure to make other test cases useable
+	all enable - use a 'for' loop to cycle through each state and check its expected output (<5)
+	
+	these test cases will only pass if the previous first two conditions have passed -> bit-burst error,
+	consequence of one part of the alogrithm not working will influence the other parts to fail as well
+	
+	test alternating patterns - test each output after each En/rst, see if it p=matches the expected
+		synchronise it with the clock, have to hardcode this into verilog code, ie #10; en_fsm = 1 on clock 
+	
+	test illegal states - check that the default command to 0001 is working as expected
+		- although this cannot appear due to the logic of the program we still need to see that default case statements 
+			are safely handled in the fsm
+		- 1111, 0000, 0110, 1100, 0011 (multiple states at once, or no states)
+	*/
+	
+	
+	 
+	 
+endmodule
 	 
 	 /* MUX
 	 
@@ -70,10 +150,30 @@ module components_tb;
 	 */
 	 
 	 
-	 
+
+module alu_tb;
+	// io
+	reg [15:0] input_a_test;
+	reg [15:0] input_b_test;
+	reg [2:0] alu_op_test;
+	wire [15:0] result_alu_test;
+	
+	
+	// instantiate module
+	ALU DUT_alu (
+		.input_a(input_a_test),
+		.input_b(input_b_test),
+		.alu_op(alu_op_test),
+		.result(result_alu_test)
+	);
+	
+	initial begin
+		
+	
+	end
 	 
 	 // ALU
-		// ADD -> ripple carry adder
+		// ADD -> ripple carry adder no
 		
 		// SUB -> ripple carry adder 
 		
@@ -117,10 +217,16 @@ module sign_ext_tb;
 	 reg [8:0] data;
 	 wire [15:0] ext_output;
 	 
+	 reg // rst test case
+	 reg // 
+	 
 	 
 	 // Instantiate Module
 	 
-	 sign_extend DUT(.in(data), .ext(ext_output));
+	 sign_extend DUT_ext(
+		.in(data),
+		.ext(ext_output)
+		);
 	 
 	 
     // Test case storage
@@ -153,7 +259,7 @@ module sign_ext_tb;
         #10;
         // move to the next test case
         if (test_count < 3) begin
-            data = test[test_count + 1];
+            data = test[test_count + 1]; 
         end
     end
 
@@ -166,7 +272,7 @@ module sign_ext_tb;
 
             if (errors == 0) begin
                 $display("success");
-                $stop;
+                $stop; // fox
             end
             else begin
                 $display("Number of Errors: %d", errors);
