@@ -157,6 +157,7 @@ module ALU (input_a, input_b, alu_op, result);
 
 					shift_amount = ~input_a + 16'd1; // Get 2's complement negation
 					result_reg = $signed(input_b) >>> shift_amount; // use signed shift operator to preserve sign
+					// all values must be signed for a signed shift to occur (verilog syntax)
 					
 					end else begin
 						// shift left (MSB pos)

@@ -168,7 +168,7 @@ module alu_tb;
 	);
 	
 	initial begin
-		
+		// initial values of inputs
 	
 	end
 	 
@@ -195,16 +195,47 @@ module alu_tb;
 		- all ones + all ones
 	*/
 		
-	/* registers
-		- test who wins with rst and r_in
-		- check with and without clk
-	
-	
-	*/
+
 	 
 
 endmodule
 
+
+module register_tb;
+	//io
+	reg [15:0] din_reg;
+	reg [0:0] rin_reg;
+	reg [0:0] clk_reg;
+	wire [15:0] output_reg;
+	reg [0:0] rst_reg;
+	
+	
+	
+	// instantiate module to be tested
+	register_n #(.N(16)) DUT_reg (
+	.data_in(din_reg),
+	.r_in(rin_reg),
+	.clk(clk_reg),
+	.Q(output_reg),
+	.rst(rst_reg)
+	);
+	
+	/* registers
+		- test who wins with rst and r_in
+		- check with and without clk
+		
+		workflow to be done:
+			- with specific input ie. {N{1'b1}};
+			
+		test cases:
+			- first, verify that as r_in is active that the data actually goes input the output_reg
+			- second, verify that rst works and output should be all zeros once done
+			- third, check that when rst and r_in are both active, who wins? (rst, should win)
+			- check that when r_in is on, and clk is off, output should not change (keep state as {N{1'b1}}
+	*/
+	
+	
+endmodule
 
 
 module sign_ext_tb;
