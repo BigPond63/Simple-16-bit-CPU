@@ -5,6 +5,7 @@ This file contains a Verilog test bench to test the correctness of the individua
     components used in the processor.
 
 Please enter your student ID:
+	36180521
 
 */
 
@@ -443,7 +444,6 @@ module register_tb(clk_reg);
 			#10;
 			
 			if (errors_reg == 32'd0) $display("Success for register TB!");
-			$stop;
 			
 		end
 	
@@ -463,6 +463,8 @@ module register_tb(clk_reg);
 			
 			if (error_value == 32'd1) begin
 				errors_reg <= errors_reg + error_value;
+				$display("Register Error: Expected %b, got: %b",
+					exp_cur, output_reg);
 			end
 		end
 		
@@ -479,6 +481,8 @@ module register_tb(clk_reg);
 			count_reg <= count_reg + 32'd1;
 			
 			if (error_value == 32'd1) begin
+				$display("Register Error: Expected %b, got: %b",
+					exp_cur, output_reg);
 				errors_reg <= errors_reg + error_value;
 			end
 		end
@@ -498,6 +502,8 @@ module register_tb(clk_reg);
 			count_reg <= count_reg + 32'd1;
 			
 			if (error_value == 32'd1) begin
+				$display("Register Error: Expected %b, got: %b",
+					exp_cur, output_reg);
 				errors_reg <= errors_reg + error_value;
 			end
 			
@@ -518,6 +524,8 @@ module register_tb(clk_reg);
 			count_reg <= count_reg + 32'd1;
 
 			if (error_value == 32'd1) begin
+				$display("Register Error: Expected %b, got: %b",
+					exp_cur, output_reg);
 				errors_reg <= errors_reg + error_value;
 			end
 			
@@ -535,8 +543,6 @@ module register_tb_checker(reg_value, exp_reg, error_reg);
 	
 	always @(*) begin
 		if (reg_value !== exp_reg) begin
-			$display("Register Error: Expected %b, got: %b",
-				exp_reg, reg_value);
 			error_reg = 32'd1;
 		end else error_reg = 32'd0;
 	

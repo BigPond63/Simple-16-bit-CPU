@@ -9,13 +9,13 @@ z2
 cModel Technology
 dC:/intelFPGA_lite/18.1
 vALU
-Z0 !s110 1790187497
+Z0 !s110 1790197748
 !i10b 1
 !s100 FG68IBP`:S0Mf`=X::k^H2
 I5o01S56z<7AfZ1c:EKlW_3
 Z1 VDg1SIo80bB@j0V0VzS_@n1
 Z2 dC:/Users/ziggy/Documents/ECE2072/Project/TASK1_TBDATA
-Z3 w1790140509
+Z3 w1790191130
 Z4 8C:/Users/ziggy/Documents/ECE2072/Project/components.v
 Z5 FC:/Users/ziggy/Documents/ECE2072/Project/components.v
 L0 124
@@ -23,7 +23,7 @@ Z6 OV;L;10.5b;63
 r1
 !s85 0
 31
-Z7 !s108 1790187497.000000
+Z7 !s108 1790197748.000000
 Z8 !s107 C:/Users/ziggy/Documents/ECE2072/Project/components.v|
 Z9 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/ziggy/Documents/ECE2072/Project/components.v|
 !i113 1
@@ -31,65 +31,65 @@ Z10 o-work work
 Z11 tCvgOpt 0
 n@a@l@u
 valu_tb
-R0
+Z12 !s110 1790187497
 !i10b 1
 !s100 Xozg1>JHE7eYQD31<4JSB1
 IlbofF:K:>2Vnh=czSOUQ00
 R1
 R2
-Z12 w1790187369
-Z13 8C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v
-Z14 FC:/Users/ziggy/Documents/ECE2072/Project/components_tb.v
+Z13 w1790187369
+Z14 8C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v
+Z15 FC:/Users/ziggy/Documents/ECE2072/Project/components_tb.v
 L0 411
 R6
 r1
 !s85 0
 31
-R7
-Z15 !s107 C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v|
-Z16 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v|
+Z16 !s108 1790187497.000000
+Z17 !s107 C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v|
+Z18 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v|
 !i113 1
 R10
 R11
 vcomponents_tb
 R0
 !i10b 1
-!s100 JECMYfk:V9^]YiGM2LQT60
-I<hzFT`ObEI6VJ[?CG3D?V3
+!s100 3=NB7I[>1Bi6Li6oXhj2a1
+IO@a21RPZkb]B@a?2P`m0f0
 R1
 R2
-R12
-R13
+Z19 w1790197698
 R14
-Z17 L0 11
+R15
+L0 555
 R6
 r1
 !s85 0
 31
 R7
-R15
-R16
+R17
+R18
 !i113 1
 R10
 R11
 vfsm_tb
 R0
 !i10b 1
-!s100 2X`F24keCzOhcjOQNQz4n3
-I8LFY8jb<O7TFBSl6:Tg9]1
+!s100 kjf1GVz<5DLiaGFeaQ;U93
+Iz7=AlUkCAVEUCMT5LglKa0
 R1
 R2
-R12
-R13
+R19
 R14
-L0 68
+R15
+L0 13
 R6
 r1
 !s85 0
 31
 R7
-R15
-R16
+R17
+R18
 !i113 1
 R10
 R11
@@ -117,8 +117,8 @@ R11
 vregister_n
 R0
 !i10b 1
-!s100 T70=3Z=lN>5AUZk?LdU5M2
-IBOmJG_gMT851dSH7D;b>l1
+!s100 3ihJN_LK;UNF_<JQTOBYo3
+I0ioNGPJg8O^hVYRbbY;gi0
 R1
 R2
 R3
@@ -138,42 +138,63 @@ R11
 vregister_tb
 R0
 !i10b 1
-!s100 ;:lLE2P_J?8oUaURYX7L>0
-IOg5OXHUQADCTYSNzglJ7a0
+!s100 ajbbH2Sc=@kS@]cGIc@0N3
+IDm=D0HI>zib;fi@[L@7LH3
 R1
 R2
-R12
-R13
+R19
 R14
-L0 461
+R15
+L0 373
 R6
 r1
 !s85 0
 31
 R7
+R17
+R18
+!i113 1
+R10
+R11
+vregister_tb_checker
+R0
+!i10b 1
+!s100 ]OU8U5Rdn5I3_a7`:Wb9d0
+IG@a`Y=QPFL^OY>hQB3=1Q2
+R1
+R2
+R19
+R14
 R15
-R16
+L0 537
+R6
+r1
+!s85 0
+31
+R7
+R17
+R18
 !i113 1
 R10
 R11
 vsign_ext_tb
-R0
+R12
 !i10b 1
 !s100 ZJdVe;F?Liz`eg1TWnh8T0
 I>geaLh;:J]l_CIY7o4c:_3
 R1
 R2
-R12
 R13
 R14
+R15
 L0 498
 R6
 r1
 !s85 0
 31
-R7
-R15
 R16
+R17
+R18
 !i113 1
 R10
 R11
@@ -187,7 +208,7 @@ R2
 R3
 R4
 R5
-R17
+L0 11
 R6
 r1
 !s85 0
