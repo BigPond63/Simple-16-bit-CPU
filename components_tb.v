@@ -153,26 +153,7 @@ endmodule
 	 
 	 
 
-module alu_tb;
-	// io
-	reg [15:0] input_a_test;
-	reg [15:0] input_b_test;
-	reg [2:0] alu_op_test;
-	wire [15:0] result_alu_test;
-	
-	
-	// instantiate module
-	ALU DUT_alu (
-		.input_a(input_a_test),
-		.input_b(input_b_test),
-		.alu_op(alu_op_test),
-		.result(result_alu_test)
-	);
-	
-	initial begin
-		// initial values of inputs
-	
-	end
+
 	 
 	 // ALU
 		// ADD -> ripple carry adder no
@@ -198,10 +179,8 @@ module alu_tb;
 	*/
 		
 
-	 
-
-endmodule
-
+	
+	
 
 module register_tb;
 	//io
@@ -240,14 +219,18 @@ module register_tb;
 endmodule
 
 
-module sign_ext_tb;
+	/* ----------------------------------- 
+				SIGN EXTENDER
+	-------------------------------------*/
+	
+
     // TODO: Implement the logic of your testbench here
 	 
 	 
 	 // Create I/O variables
 	 
 	 // Sign Extender I/Os
-	 reg [8:0] data;
+	 reg [8:0] data_se;
 	 wire [15:0] ext_output;
 	 
 	 
@@ -255,77 +238,176 @@ module sign_ext_tb;
 	 // Instantiate Module
 	 
 	 sign_extend DUT_ext(
-		.in(data),
+		.in(data_se),
 		.ext(ext_output)
 		);
 	 
 	 
     // Test case storage
-    reg  [8:0]  test [0:3];
-    reg  [15:0] exp  [0:3];
+    reg  [8:0]  test_se [0:3];
+    reg  [15:0] exp_se  [0:3];
  
     // create and initialize your testbench statistics
-    integer test_count = 0;
-    integer errors = 0;
+    integer test_count_se = 0;
+    integer errors_se = 0;
+	 reg done_se = 0;
  
     initial begin
         // Populate test cases
-        test[0] = 9'b100000000; // only MSB is 1  -> most negative value (-256)
-        test[1] = 9'b011111111; // only MSB is 0  -> most positive value (+255)
-        test[2] = 9'b000000000; // all 0          -> zero
-        test[3] = 9'b111111111; // all 1          -> -1
+        test_se[0] = 9'b100000000; // only MSB is 1  -> most negative value (-256)
+        test_se[1] = 9'b011111111; // only MSB is 0  -> most positive value (+255)
+        test_se[2] = 9'b000000000; // all 0          -> zero
+        test_se[3] = 9'b111111111; // all 1          -> -1
  
         // Corresponding expected 16-bit sign-extended values
-        exp[0] = 16'b1111111100000000; // -256
-        exp[1] = 16'b0000000011111111; // +255
-        exp[2] = 16'b0000000000000000; // 0
-        exp[3] = 16'b1111111111111111; // -1
+        exp_se[0] = 16'b1111111100000000; // -256
+        exp_se[1] = 16'b0000000011111111; // +255
+        exp_se[2] = 16'b0000000000000000; // 0
+        exp_se[3] = 16'b1111111111111111; // -1
  
         // Instantiate Input with first test case
-        data = test[0];
+        data_se = test_se[0];
     end
 	 
 
     always begin
         #10;
         // move to the next test case
-        if (test_count < 3) begin
-            data = test[test_count + 1]; 
+        if (test_count_se < 3) begin
+            data_se = test_se[test_count_se + 1]; 
         end
     end
 
     always begin
         #9;
-        if (test_count == 4) begin
+        if (test_count_se == 4) begin
             #10;
             /* Display that the code is finished,
                and state how many errors occurred. */
 
-            if (errors == 0) begin
+            if (errors_se == 0) begin
                 $display("success");
-                $stop; // fox
             end
             else begin
-                $display("Number of Errors: %d", errors);
+                $display("Number of Errors: %d", errors_se);
             end
 
             // Stop the test bench
             $stop;
         end
 
-        if (ext_output !== exp[test_count]) begin
+        if (ext_output !== exp_se[test_count_se]) begin
             $display(
                 "FAIL: input=%b, expected %b, but got %b",
-                test[test_count],
-                exp[test_count],
+                test_se[test_count_se],
+                exp_se[test_count_se],
                 ext_output
             );
 
-            errors = errors + 1;
+            errors_se = errors_se + 1;
         end
         #1;
         // increment the test case count
-        test_count = test_count + 1;
+        test_count_se = test_count_se + 1;
+    end
+	 
+	 
+    
+	/* ----------------------------------- 
+				ALU
+	-------------------------------------*/
+
+    // Create I/O variables
+    reg  [15:0] input_a_alu;
+    reg  [15:0]  input_b_alu;
+    reg [2:0] op_code_alu;
+	 wire [15:0] result_alu;
+		
+		
+	// Instantiate Module
+
+		ALU DUT_alu (.input_a(input_a_alu), .input_b(input_b_alu), .alu_op(op_code_alu), .result(result_alu));
+
+    // Create test cases storages
+	 
+	 reg [15:0] test_a_alu [0:9];
+	 reg [15:0] test_b_alu [0:9];
+	 reg [2:0] test_op_alu [0:9];
+	 reg [15:0] exp_alu [0:9];
+	 
+	 
+	 // Testbench statistics
+		
+	 integer test_count_alu = 0;
+	 integer errors_alu = 0;
+	 reg done_alu = 0;
+	 
+	 // Load the expected values from inputs into test cases
+
+		 initial begin
+		  test_a_alu[0]=16'd6;    test_b_alu[0]=16'd7;    test_op_alu[0]=3'b000; exp_alu[0]=16'd42;    // multiply: basic
+		  test_a_alu[1]=16'd1000; test_b_alu[1]=16'd1000; test_op_alu[1]=3'b000; exp_alu[1]=16'h4240;  // multiply: overflow
+		  test_a_alu[2]=16'd100;  test_b_alu[2]=16'd25;   test_op_alu[2]=3'b001; exp_alu[2]=16'd125;   // add: basic
+		  test_a_alu[3]=16'd32767;test_b_alu[3]=16'd1;    test_op_alu[3]=3'b001; exp_alu[3]=16'h8000;  // add: overflow
+		  test_a_alu[4]=16'd50;   test_b_alu[4]=16'd20;   test_op_alu[4]=3'b010; exp_alu[4]=16'd30;    // subtract: basic
+		  test_a_alu[5]=16'd5;    test_b_alu[5]=16'd10;   test_op_alu[5]=3'b010; exp_alu[5]=16'hFFFB;  // subtract: negative result
+		  test_a_alu[6]=16'd2;    test_b_alu[6]=16'd6;    test_op_alu[6]=3'b011; exp_alu[6]=16'd24;    // shift: left
+		  test_a_alu[7]=-16'd1;   test_b_alu[7]=-16'd6;   test_op_alu[7]=3'b011; exp_alu[7]=16'hFFFD;  // shift: signed right
+		  test_a_alu[8]=16'd1;    test_b_alu[8]=16'd1;    test_op_alu[8]=3'b101; exp_alu[8]=16'h0000;  // don't-care opcode
+		  test_a_alu[9]=-16'd1;   test_b_alu[9]=-16'd1;   test_op_alu[9]=3'b001; exp_alu[9]=16'hFFFE;  // add: negative operands
+ 
+		  // Load first test case
+		  input_a_alu = test_a_alu[0];
+		  input_b_alu = test_b_alu[0];
+		  op_code_alu  = test_op_alu[0];
+	 end
+	 
+
+	 always begin
+		  #10;
+		  if (test_count_alu < 9) begin
+				input_a_alu = test_a_alu[test_count_alu + 1];
+				input_b_alu = test_b_alu[test_count_alu + 1];
+				op_code_alu  = test_op_alu[test_count_alu + 1];
+		  end
+	 end
+	 
+	 
+	 
+	 always begin
+		  #9;
+		  if (test_count_alu == 10 && !done_alu) begin
+				done_alu = 1;
+				if (errors_alu == 0)
+					 $display("ALU: success");
+				else
+					 $display("ALU: Number of Errors: %d", errors_alu);
+		  end
+ 
+		  if (!done_alu) begin
+				if (result_alu !== exp_alu[test_count_alu]) begin
+					 $display(
+						  "FAIL (ALU): a=%h, b=%h, op=%b, expected %h, but got %h",
+						  test_a_alu[test_count_alu],
+						  test_b_alu[test_count_alu],
+						  test_op_alu[test_count_alu],
+						  exp_alu[test_count_alu],
+						  result_alu
+					 );
+					 errors_alu = errors_alu + 1;
+				end
+				#1;
+				test_count_alu = test_count_alu + 1;
+		  end
+	 end	 
+	 
+	 // End simulation when done flags are 1
+    always begin
+        #1;
+        if (done_se && done_alu) begin
+            $display("All testbenches complete.");
+            $stop;
+        end
     end
 
 endmodule
