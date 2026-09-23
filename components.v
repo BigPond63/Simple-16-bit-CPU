@@ -36,7 +36,7 @@ module tick_FSM(rst, clk, enable, tick);
 	 input [0:0] enable; // en = 1 -> cycle state
 	 output [3:0] tick; // one-hot state 0001 0010 0100 1000
 	
-	reg [3:0] tick_reg;
+	reg [3:0] tick_reg = 4'b0001;
 	reg [3:0] next_state;
 	
 	assign tick = tick_reg;

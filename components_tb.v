@@ -9,6 +9,8 @@ Please enter your student ID:
 */
 
 module components_tb;
+
+	fsm_tb my_tb();
     // TODO: Implement the logic of your testbench here
 	 
 	 /* SIGN EXTENDER
@@ -63,7 +65,7 @@ module components_tb;
 	 
 endmodule
 
-module fsm_tb;
+module fsm_tb; // io be a flag to know when the next test bench should be done
 	// REGISTERS SHOULD BE INPUTS
 	// OUTPUTS SHOULD BE WIRES -> TO TEST
 	
@@ -74,73 +76,326 @@ module fsm_tb;
 
 	wire [3:0] tick_fsm;
 	
-	reg [3:0] exp [0:0]; //vectorsize];
+	reg [3:0] exp_initial;
+	reg [3:0] exp_rst; //vectorsize];
+	reg [3:0] exp_cycle [0:3];
+	reg [3:0] illegal_state [0:11];
+	reg [3:0] exp_clk_low;
+	reg [3:0] exp_rst_en;
+	reg [3:0] exp_rst_en_cycle [0:1];
+	reg [3:0] exp_sequence [0:2];
+	
 	
 	
 	// instantiate module to test DUT
 	tick_FSM DUT_fsm(
 		.rst(rst_fsm),
-		.clock(clk_fsm),
+		.clk(clk_fsm),
 		.enable(en_fsm),
 		.tick(tick_fsm)
 	);
 	
+	integer errors_fsm, count_fsm;
+	integer i;
 
 	// initial inputs
 	initial begin
 		rst_fsm = 1'd0;
 		clk_fsm = 1'd0;
 		en_fsm = 1'd0;
+		
+		exp_initial = 4'b0001;
+		
+		exp_rst = 4'b0001;
+		
+		
+		exp_cycle[0] = 4'b0010;
+		exp_cycle[1] = 4'b0100;
+		exp_cycle[2] = 4'b1000;
+		exp_cycle[3] = 4'b0001;
+		
+		// illegal states
+		illegal_state[0] = 4'b0000; // all must return back to 0001
+		illegal_state[1] = 4'b0011;
+		illegal_state[2] = 4'b0101;
+		illegal_state[3] = 4'b0110;
+		illegal_state[4] = 4'b1001;
+		illegal_state[5] = 4'b1010;
+		illegal_state[6] = 4'b1100;
+		illegal_state[7] = 4'b0111;
+		illegal_state[8] = 4'b1011;
+		illegal_state[9] = 4'b1101;
+		illegal_state[10] = 4'b1110;
+		illegal_state[11] = 4'b1111;
+	
+		
+		// this one turns off the clock, make sure its on an off clk cycle
+		exp_clk_low = 4'b0001; // en=1, clk=0, make sure doesnt' change stat with clock on
+		
+		exp_rst_en = 4'b0001;
+		
+		exp_rst_en_cycle[0] = 4'b0010;
+		exp_rst_en_cycle[1] = 4'b0001;
+		
+		
+		//E E R
+		exp_sequence[0] = 4'b0010;
+		exp_sequence[1] = 4'b0100;
+		exp_sequence[2] = 4'b0001;
+		
+		
 	end
 	
 	
 	// increment loop
-	always begin
-		#12
+	initial begin
+		#12;
 		
 		forever begin
-			#5
+			#5;
 			clk_fsm = ~clk_fsm;
 		end
 		
 	end
 	
-	// test that reset works
-	
-	// test all enable , cycling states
-	// alternating patterns
-	// special cases
-		// en and rst together
-	// no clk, en
-	// test illegal states -> must fall to 0001
 	
 	
-	// create tb stats
+	initial begin
+		// tb statistics
+		count_fsm = 32'd0;
+		errors_fsm = 32'd0;
+	end
 	
+	// test that fsm starts at the initial state
+
 	
-	// test the DUT and do counter/ erro checking etc.
+	always begin
+		#9;
+		
+		if (count_fsm == 32'd25) begin
+			#10;
+			
+			if (errors_fsm == 32'd0) $display("Success for fsm testbench!");
+			$stop;
+			
+		end
+		#1;
+	end
+
+		
+
+	initial begin
+		#8;
+				// check initial fsm state
+		if (tick_fsm !== exp_initial) begin
+			$display("FAIL: initial state expected: %b, got %b",
+				exp_initial, tick_fsm);
+			$display(
+			"WARNING: Future test cases will be affected by the dysfunctionality of the initial state"
+			);
+			
+			errors_fsm = errors_fsm + 32'd1;
+		end
+			
+		count_fsm = count_fsm + 32'd1;
+		
+		#2;
+		
+
+		// PREPARE FOR NEXT TEST (CYCLE)
+		@(negedge clk_fsm) begin
+			en_fsm = 1'd1;
+			rst_fsm = 1'd0;
+		end
+		
+		// check that enable works 
+		// cycle enable states
+		for (i=0; i<4; i=i+1) begin
+			
+			@(posedge clk_fsm) begin
+				#2; // wait, to let fsm settle 
+				if (tick_fsm !== exp_cycle[i]) begin
+					$display("Cycle fail: State expected: %b, got %b",
+						exp_cycle[i], tick_fsm);
+					errors_fsm = errors_fsm + 32'd1;
+				end
+				
+				count_fsm = count_fsm + 32'd1;
+		
+				end
+			end
+		
+		// PREPARE FOR NEXT TEST (RST ONLY)
+		@(negedge clk_fsm) begin
+			en_fsm <= 1'd0;
+			rst_fsm <= 1'd1;
+		end
+		
+		@(posedge clk_fsm) begin
+			#2 // wait for fsm to settle
+			if (tick_fsm !== exp_rst) begin
+				$display("Fail: Reset state expected: %b, got %b",
+					exp_rst, tick_fsm);
+				$display(
+				"WARNING: Future test cases will be affected by the dysfunction of the reset"
+				);
+				errors_fsm = errors_fsm + 1;
+			end
+			
+			count_fsm = count_fsm + 1;
+		end
+		
+		// PREPARE FOR NEXT TEST (RST AND EN RACE CONDITION)
+		@(negedge clk_fsm) begin
+			en_fsm <= 1'd1;
+			rst_fsm <= 1'd1;
+		end
+		
+		@(posedge clk_fsm) begin
+			#2
+			if (tick_fsm !== exp_rst_en) begin
+				$display("Reset enable race condition fail: State expected %b, got %b",
+					4'b0001, tick_fsm);
+				errors_fsm = errors_fsm + 32'd1;
+			end
+			
+			count_fsm = count_fsm + 32'd1;
+		
+		end
+		
+		// RESET BACK TO INITIAL STATE
+		@(negedge clk_fsm) begin
+			en_fsm <= 1'd0;
+			rst_fsm <= 1'd1;
+		end
+		
+		// PREPARE FOR NEXT TEST (ER)
+		@(posedge clk_fsm) begin
+			#2;
+			en_fsm <= 1'd1;
+			rst_fsm <= 1'd0;
+			
+		end
+		
+		
+		
+		for (i = 0; i<2; i=i+1) begin
+			// reset
+			if (i==1) begin
+				en_fsm = 1'd0;
+				rst_fsm = 1'd1;
+			end
+			
+			@(posedge clk_fsm) begin
+				#2;
+				if (tick_fsm !== exp_rst_en_cycle[i]) begin
+					$display("Half cycle reset fail: State expected %b, got %b",
+						exp_rst_en_cycle[i], tick_fsm);
+					errors_fsm = errors_fsm + 32'd1;
+				end
+				
+				count_fsm = count_fsm + 32'd1;
+			end
+			
+		end
+		
+		
+		// RESET CYCLE FOR NEXT TEST
+		@(negedge clk_fsm) begin
+			en_fsm <= 1'd0;
+			rst_fsm <= 1'd1;
+		end
+		
+		@(posedge clk_fsm) #2 rst_fsm <= 1'd0;
+		
+		// SET UP VARIABLES FOR NEXT CLOCK CYCLE
+		@(negedge clk_fsm) begin
+			en_fsm <= 1'd1;
+			rst_fsm <= 1'd0;
+		end
+		
+		for (i=0; i<3; i=i+1) begin
+			// reset midway
+			if (i==2) begin
+				en_fsm <= 1'd0;
+				rst_fsm <= 1'd1;
+			end
+			
+			@(posedge clk_fsm) begin
+				#2;
+				if (tick_fsm !== exp_sequence[i]) begin
+					$display("Sequence reset fail: State expected %b, got %b",
+						exp_sequence[i], tick_fsm);
+					errors_fsm = errors_fsm + 1;
+				end
+				
+				count_fsm = count_fsm + 1;
+			
+			end
+			
+		end
+		
+	// set variables to reset fsm back to initial state
+	@(negedge clk_fsm) begin
+		en_fsm <= 1'd0;
+		rst_fsm <= 1'd1;
+	end
 	
-	/*
-	each separate test case do a for loop
+	// set up variables for next tb (en=1, without clock)
+	@(posedge clk_fsm) begin
+		#2;
+		en_fsm <= 1'd1;
+		rst_fsm <=1'd0;
+	end
+		
+	// test EN ON WITHOUT CLOCK
 	
-	first - test that reset works, so state should be 0001 -> make sure to make other test cases useable
-	all enable - use a 'for' loop to cycle through each state and check its expected output (<5)
+	@(negedge clk_fsm) begin
+		#2;
+		
+		if (tick_fsm !== exp_clk_low) begin
+			$display("Clock input low fail: State expected: %b, got %b",
+				4'b0001, tick_fsm);
+			errors_fsm = errors_fsm + 1;
+		end
+		
+		count_fsm = count_fsm + 1;
+		
+	end
 	
-	these test cases will only pass if the previous first two conditions have passed -> bit-burst error,
-	consequence of one part of the alogrithm not working will influence the other parts to fail as well
+	// RESET TO INITIAL STATE
+	@(negedge clk_fsm) begin
+		rst_fsm <= 1'd1;
+		en_fsm <= 1'd0;
+	end
+		
+	// SET UP VARIABLES FOR NEXT TB (ILLEGAL STATES)
+	@(posedge clk_fsm) begin
+		#2;
+		en_fsm <= 1'd1;
+		rst_fsm <= 1'd0;
+	end
 	
-	test alternating patterns - test each output after each En/rst, see if it p=matches the expected
-		synchronise it with the clock, have to hardcode this into verilog code, ie #10; en_fsm = 1 on clock 
-	
-	test illegal states - check that the default command to 0001 is working as expected
-		- although this cannot appear due to the logic of the program we still need to see that default case statements 
-			are safely handled in the fsm
-		- 1111, 0000, 0110, 1100, 0011 (multiple states at once, or no states)
-	*/
-	
-	
-	 
-	 
+	for (i=0; i<12; i=i+1) begin
+		// hierarchal assignment
+		@(negedge clk_fsm) DUT_fsm.tick_reg = illegal_state[i];
+		
+		@(posedge clk_fsm) begin
+			#2;
+			if (tick_fsm !== 4'b0001) begin
+				$display("Illegal state recovery fail: State expected: %b, got %b",
+					4'b0001, tick_fsm);
+				errors_fsm = errors_fsm + 1;
+			end
+			
+			count_fsm = count_fsm + 1;
+		end
+		
+	end
+		
+		
+	end
+		
 endmodule
 	 
 	 /* MUX

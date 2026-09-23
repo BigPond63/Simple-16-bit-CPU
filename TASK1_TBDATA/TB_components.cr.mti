@@ -1,0 +1,16 @@
+C:/Users/ziggy/Documents/ECE2072/Project/components.v {1 {vlog -work work -stats=none C:/Users/ziggy/Documents/ECE2072/Project/components.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module sign_extend
+-- Compiling module tick_FSM
+-- Compiling module multiplexer
+-- Compiling module ALU
+-- Compiling module register_n
+
+Top level modules:
+	sign_extend
+	tick_FSM
+	multiplexer
+	ALU
+	register_n
+
+} {} {}}
