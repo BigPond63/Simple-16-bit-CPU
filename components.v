@@ -199,7 +199,7 @@ module register_n(data_in, r_in, clk, Q, rst);
 	input rst;
 	output [N-1:0] Q;
 	
-	reg [N-1:0] Q_reg;
+	reg [N-1:0] Q_reg = {N{1'b0}};
 	
 	// TODO: Implement register logic:
 	

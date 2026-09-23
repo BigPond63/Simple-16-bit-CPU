@@ -8,70 +8,15 @@ Please enter your student ID:
 
 */
 
-module components_tb;
 
-	fsm_tb my_tb();
-    // TODO: Implement the logic of your testbench here
-	 
-	 /* SIGN EXTENDER
-		// test the value against extended by 0 vs 1 
-			-> check that it has extended MSB correctly
-			
-			test cases: (main)
-				9'b100000000 -> only MSB is one
-				9'b011111111 -> only MSB is 0
-				9'b000000000 -> all 0
-				9'b111111111 -> all 1
-				reg signed [8:0] test;
-				reg signed [15:0] exp;
-	 
-	 
-	 */
-	 
-	 
-	 
-	 
-	 
-
-	 
-	 /* TICK FSM
-	 
-		test different state paths:
-			- test with and without clk
-			
-			- enable cycle only
-			- reset cycle only
-			- test who wins -> enable resest
-			
-			- reset alone, confirm 0001 is the state (check each time), reset from all states 
-			- enable alone, confirm it cycles through all states (wraparound too)
-			- do reset and enable simultaneously -> rst should win, check all states 
-			- check illegal states
-			- test with and without clock 
-				- en -> 0, clk =1
-				
-				
-		
-		test illegal states:
-			- 0000
-			- 0011
-			- 0110
-			- 1100
-			- 0111
-			- 1110
-			- 1111
-	 
-	 */
-	 
-endmodule
-
-module fsm_tb; // io be a flag to know when the next test bench should be done
+module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should be done
 	// REGISTERS SHOULD BE INPUTS
 	// OUTPUTS SHOULD BE WIRES -> TO TEST
 	
+	input [0:0] clk_fsm;
+	
 	// initialise varaibles
 	reg [0:0] rst_fsm;
-	reg [0:0] clk_fsm;
 	reg [0:0] en_fsm;
 
 	wire [3:0] tick_fsm;
@@ -101,7 +46,6 @@ module fsm_tb; // io be a flag to know when the next test bench should be done
 	// initial inputs
 	initial begin
 		rst_fsm = 1'd0;
-		clk_fsm = 1'd0;
 		en_fsm = 1'd0;
 		
 		exp_initial = 4'b0001;
@@ -143,18 +87,6 @@ module fsm_tb; // io be a flag to know when the next test bench should be done
 		exp_sequence[1] = 4'b0100;
 		exp_sequence[2] = 4'b0001;
 		
-		
-	end
-	
-	
-	// increment loop
-	initial begin
-		#12;
-		
-		forever begin
-			#5;
-			clk_fsm = ~clk_fsm;
-		end
 		
 	end
 	
@@ -437,18 +369,30 @@ endmodule
 	
 	
 
-module register_tb;
+module register_tb(clk_reg);
+
+	parameter Z=16;
+	
 	//io
-	reg [15:0] din_reg;
+	input [0:0] clk_reg;
+	
+	reg [Z-1:0] din_reg;
 	reg [0:0] rin_reg;
-	reg [0:0] clk_reg;
-	wire [15:0] output_reg;
 	reg [0:0] rst_reg;
+	
+	wire [Z-1:0] output_reg;
+	wire [31:0] error_value;
+	
+	
+	reg [Z-1:0] exp_cur;
+	reg [Z-1:0] exp_initial;
+	reg [Z-1:0] exp_rin_value;
+	
 	
 	
 	
 	// instantiate module to be tested
-	register_n #(.N(16)) DUT_reg (
+	register_n #(.N(Z)) DUT_reg (
 	.data_in(din_reg),
 	.r_in(rin_reg),
 	.clk(clk_reg),
@@ -456,26 +400,165 @@ module register_tb;
 	.rst(rst_reg)
 	);
 	
-	/* registers
-		- test who wins with rst and r_in
-		- check with and without clk
-		
-		workflow to be done:
-			- with specific input ie. {N{1'b1}};
-			
-		test cases:
-			- first, verify that as r_in is active that the data actually goes input the output_reg
-			- second, verify that rst works and output should be all zeros once done
-			- third, check that when rst and r_in are both active, who wins? (rst, should win)
-			- check that when r_in is on, and clk is off, output should not change (keep state as {N{1'b1}}
-	*/
+	// instantiate checker module
+	register_tb_checker #(.A(Z)) initial_reg_check (
+		.reg_value(output_reg),
+		.exp_reg(exp_cur),
+		.error_reg(error_value)
+		);
 	
+	integer count_reg, errors_reg;
+	
+	// initialise values
+	initial begin
+		count_reg = 32'd0;
+		errors_reg = 32'd0;
+		
+		din_reg = {Z{1'd1}}; // set as all ones so that it checks the initial state is working
+		rin_reg = 1'd0;
+		rst_reg = 1'd0;
+		
+		exp_initial = {Z{1'd0}};
+		exp_rin_value = {Z{1'd1}};
+	end
+	
+	// test initial state
+	
+	
+	// test r_in works
+	
+	// test rst works
+	
+	// load up a value in datain, and test the race condition with r_in and rst
+	
+	// load up a value with r_in, then check that when clk is off no change should occur to the value
+		// do one with rst
+		// do one with enable
+		
+		
+		
+	always begin
+	#9;
+		if (count_reg == 32'd4) begin
+			#10;
+			
+			if (errors_reg == 32'd0) $display("Success for register TB!");
+			$stop;
+			
+		end
+	
+	#1;
+	
+	end
+	
+	initial begin
+		#5; // safety
+		exp_cur = exp_initial;
+		// test initial state, have din differ from initial state to ensure that it does not change
+		
+		
+		@(posedge clk_reg) begin
+			#2;
+			count_reg <= count_reg + 32'd1;
+			
+			if (error_value == 32'd1) begin
+				errors_reg <= errors_reg + error_value;
+			end
+		end
+		
+		// test r_in works
+		
+		// setup variable for next test
+		@(negedge clk_reg) begin
+			rin_reg = 1'd1;
+			exp_cur <= exp_rin_value;
+		end
+		
+		@(posedge clk_reg) begin
+			#2;
+			count_reg <= count_reg + 32'd1;
+			
+			if (error_value == 32'd1) begin
+				errors_reg <= errors_reg + error_value;
+			end
+		end
+		
+		// datain value, test race b/w rst and en
+		
+		// force hierarchal assignment
+		@(negedge clk_reg) begin
+			DUT_reg.Q_reg <= {Z{1'd1}}; // force output Q_reg to be that value
+			rst_reg <= 1'd1;
+			rin_reg <= 1'd1;
+			exp_cur <= {Z{1'b0}};
+		end
+		
+		@(posedge clk_reg) begin
+			#2
+			count_reg <= count_reg + 32'd1;
+			
+			if (error_value == 32'd1) begin
+				errors_reg <= errors_reg + error_value;
+			end
+			
+		end
+		
+		// reset variables and prepare for next test case
+		@(negedge clk_reg) begin
+
+					DUT_reg.Q_reg <= {Z{1'd1}};
+					exp_cur <= {Z{1'd1}};
+					rst_reg <= 1'd1;
+					rin_reg <= 1'd1;
+	
+			end
+	
+			#2;
+			// do test case without clock;
+			count_reg <= count_reg + 32'd1;
+
+			if (error_value == 32'd1) begin
+				errors_reg <= errors_reg + error_value;
+			end
+			
+		end
+
+	
+endmodule
+
+module register_tb_checker(reg_value, exp_reg, error_reg);
+	parameter A = 16; // default is 16, but can be overridded to be equated to Z
+	
+	input [A-1:0] reg_value;
+	input [A-1:0] exp_reg;
+	output reg [31:0] error_reg;
+	
+	always @(*) begin
+		if (reg_value !== exp_reg) begin
+			$display("Register Error: Expected %b, got: %b",
+				exp_reg, reg_value);
+			error_reg = 32'd1;
+		end else error_reg = 32'd0;
+	
+	end
 	
 endmodule
 
 
 
 module components_tb;
+	reg [0:0] clk_tb = 1'd0;
+	
+	initial begin
+	#12;
+		forever #5 clk_tb = ~clk_tb;
+	end
+
+	fsm_tb my_tb(.clk_fsm(clk_tb));
+	register_tb #(.Z(16)) my_reg(.clk_reg(clk_tb));
+
+
+	
 	/* ----------------------------------- 
 				SIGN EXTENDER
 	-------------------------------------*/
