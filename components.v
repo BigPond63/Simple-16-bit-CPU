@@ -154,8 +154,10 @@ module ALU (input_a, input_b, alu_op, result);
 			// be careful of signed shift causing a wrap around
 				if (input_a[15] == 1) begin
 					// shift right (MSB neg)
-					shift_amount = ~input_a + 1; // Get 2's complement negation
+
+					shift_amount = ~input_a + 16'd1; // Get 2's complement negation
 					result_reg = $signed(input_b) >>> shift_amount; // use signed shift operator to preserve sign
+					// all values must be signed for a signed shift to occur (verilog syntax)
 					
 					end else begin
 						// shift left (MSB pos)
@@ -203,7 +205,7 @@ module register_n(data_in, r_in, clk, Q, rst);
 	
 	assign Q = Q_reg;
 	
-	// change this so that there isn't a race condition with rst and r_in
+	
 	always @(posedge clk) begin
 		if (rst) begin
 			Q_reg <= {N{1'b0}};

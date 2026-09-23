@@ -252,6 +252,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 		  sel_reg = 4'b1111;
 		  H_in = 1'b0;
 		  PC_in = 1'b0;
+		  PC_address = PC_address; // self assignment to take away latch warning
 
 		if (enable) begin
         // TODO: Turn on specific control signals based on current tick:
