@@ -444,6 +444,7 @@ module register_tb(clk_reg);
 			#10;
 			
 			if (errors_reg == 32'd0) $display("Success for register TB!");
+			forever #1;
 			
 		end
 	
@@ -638,8 +639,8 @@ module components_tb;
                 $display("Number of Errors: %d", errors_se);
             end
 
-            // Stop the test bench
-            $stop;
+            // Stop the test bench, idle
+            forever #1;
         end
 
         if (ext_output !== exp_se[test_count_se]) begin
@@ -752,7 +753,7 @@ module components_tb;
         #1;
         if (done_se && done_alu) begin
             $display("All testbenches complete.");
-            $stop;
+            forever #1; // idle until al ltest done with flag
         end
     end
 
