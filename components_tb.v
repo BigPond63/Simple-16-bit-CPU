@@ -219,6 +219,8 @@ module register_tb;
 endmodule
 
 
+
+module components_tb;
 	/* ----------------------------------- 
 				SIGN EXTENDER
 	-------------------------------------*/
