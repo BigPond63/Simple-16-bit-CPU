@@ -5,3 +5,5 @@ incremental_db/
 simulation/
 simulation/modelsim/
 ECE2072_nativelink_simulation.rpt
+*.wlf
+
