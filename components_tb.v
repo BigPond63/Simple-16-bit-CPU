@@ -1,4 +1,4 @@
-`timescale 1ns/1ns
+*`timescale 1ns/1ns
 /*
 Monash University ECE2072: Assignment 
 This file contains a Verilog test bench to test the correctness of the individual 
@@ -748,6 +748,72 @@ module components_tb;
 		  end
 	 end	 
 	 
+	 
+	 
+	 
+	 	 
+	 //MULTIPLEXER
+	 
+	 // Create I/O variables
+	 
+	 reg  [15:0] R0_mux, R1_mux, R2_mux, R3_mux, R4_mux, R5_mux, R6_mux, R7_mux;
+	 reg  [15:0] G_mux;	
+	 reg  [15:0] SignExtDin_mux;
+	 reg  [3:0]  sel_mux;
+	 wire [15:0] Bus_mux;
+	 
+	 
+	 
+	 
+	 // Instantiate Module
+	 
+	 
+	 multiplexer DUT_mul (.SignExtDin(SignExtDin_mux), .R0(R0_mux), .R1(R1_mux), .R2(R2_mux), .R3(R3_mux), .R4(R4_mux), .R5(R5_mux), .R6(R6_mux), .R7(R7_mux), .G(G_mux), .sel(sel_mux), .Bus(Bus_mux));
+	 
+	 
+	 // Create placeholder values for each input into multiplexer:
+	 
+	 reg [15:0] exp_mux [0:15];
+	 
+	 
+	 // Load values:
+	 
+	 initial begin    
+		 R0_mux = 16'd1; R1_mux = 16'd2; R2_mux = 16'd3; R3_mux = 16'd4;
+		 R4_mux = 16'd5; R5_mux = 16'd6; R6_mux = 16'd7; R7_mux = 16'd8;
+		 G_mux  = 16'd9; SignExtDin_mux = 16'd10;
+		 
+		 exp_mux[0]=R0_mux; exp_mux[1]=R1_mux; exp_mux[2]=R2_mux; exp_mux[3]=R3_mux;
+		 exp_mux[4]=R4_mux; exp_mux[5]=R5_mux; exp_mux[6]=R6_mux; exp_mux[7]=R7_mux;
+		 exp_mux[8]=G_mux;  exp_mux[9]=SignExtDin_mux;
+		 
+		 // illegal input lines
+		 exp_mux[10]=16'd0; exp_mux[11]=16'd0; exp_mux[12]=16'd0; 
+		 exp_mux[13]=16'd0; exp_mux[14]=16'd0; exp_mux[15]=16'd0; 
+		 
+		 sel_mux = 4'b0000;
+end		 
+
+	 
+	 
+	 // Testbench Statistics
+	 
+	 integer test_count_mul = 0;
+	 integer errors_mul = 0;
+	 reg done_mul = 0;
+	 
+	 
+	 
+	 
+	 always begin
+		  #10;
+		  if (test_count_mul < 15) begin
+		  sel_mux = sel_mux + 1;
+		 
+		  end
+	 end	 
+	 
+	 
 	 // End simulation when done flags are 1
     always begin
         #1;
@@ -756,5 +822,10 @@ module components_tb;
             forever #1; // idle until al ltest done with flag
         end
     end
+	 
+	 
 
+	 
+	 
+	 
 endmodule
