@@ -798,20 +798,44 @@ end
 	 
 	 // Testbench Statistics
 	 
-	 integer test_count_mul = 0;
-	 integer errors_mul = 0;
-	 reg done_mul = 0;
+	 integer test_count_mux = 0;
+	 integer errors_mux = 0;
+	 reg done_mux = 0;
 	 
 	 
 	 
-	 
-	 always begin
-		  #10;
-		  if (test_count_mul < 15) begin
-		  sel_mux = sel_mux + 1;
-		 
-		  end
-	 end	 
+    always begin
+        #10;
+        if (test_count_mux < 15) begin
+            sel_mux = sel_mux + 1;
+        end
+    end
+
+
+    always begin
+        #9;
+        if (test_count_mux == 16 && !done_mux) begin
+            done_mux = 1;
+            if (errors_mux == 0)
+                $display("MUX: success");
+            else
+                $display("MUX: Number of Errors: %d", errors_mux);
+        end
+
+        if (!done_mux) begin
+            if (Bus_mux !== exp_mux[test_count_mux]) begin
+                $display(
+                    "FAIL (MUX): sel=%h, expected %h, but got %h",
+                    sel_mux,
+                    exp_mux[test_count_mux],
+                    Bus_mux
+                );
+                errors_mux = errors_mux + 1;
+            end
+            #1;
+            test_count_mux = test_count_mux + 1;
+        end
+    end
 	 
 	 
 	 // End simulation when done flags are 1
