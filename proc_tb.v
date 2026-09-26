@@ -84,7 +84,6 @@ module proc_tb;
 	*/
 	// make sure variables are fresh each time, and if we run task twice vairables aren't saved from last tim e
 	
-	reg [0:0] clk_proc;
 	
 	// in/out
 	
@@ -96,20 +95,246 @@ module proc_tb;
 	
 	// next command all reg and all values at all ticks 
 	
-	// clk, rst, bus, R0, R1, R2, R3, R4, R5, R6, R7, FSM_tick
+	// rst, bus, R0, R1, R2, R3, R4, R5, R6, R7, FSM_tick
 	// 
-	reg [16:0] correct_states [0:0]; 
+	
+	// have one task that checks all of the contents of the registers and compare it to the prewritten list
+	// task -> instruction actually doing -> check that everything is ok 
+	// task -> test edge case conditions
+	// task -> check initial state
+	// task -> check reset is working properly
 	
 	
+	integer i;
+	// define io to be tested
+	
+	reg [0:0] clk_proc = 1'd0;
+	reg [0:0] rst_proc = 1'd0;
+	reg [8:0] current_din;
+	// define 1D array for the register values in the processor
+	wire [15:0] currentRegVal [0:7];
+	
+	wire [15:0] bus_proc;
+	wire [3:0] current_tick;
+	
+	reg [15:0] expRegVal [0:7]; 
+	reg [3:0] expCurTick;
 	
 	
+	// instantiate module to be tested
+	simple_proc DUT_proc (
+		.clk(clk_proc),
+		.rst(rst_proc),
+		.din(currentDin),
+		.bus(bus_proc),
+		.R0(currentRegVal[0]),
+		.R1(currentRegVal[1]),
+		.R2(currentRegVal[2]),
+		.R3(currentRegVal[3]),
+		.R4(currentRegVal[4]),
+		.R5(currentRegVal[5]),
+		.R6(currentRegVal[6]),
+		.R7(currentRegVal[7]),
+		.FSM_tick(current_tick)
+	);
 	
-	task initial_proc_state;
+	// set up clock for testing processor
+	initial begin
+		#12;
 		
+		// first clk posedge happens at #17-> 22, #27-> 32-> #37
+		forever begin
+			#5;
+			clk_proc = ~clk_proc
+			// might be aftr check latr
+		end
+	
+	end
+	
+	
+	// set up test bench statistics
+	integer test_count, errors;
+	
+	initial begin
+		test_count = 0;
+		errors = 0;
+	end
+	
+	
+	// testing tasks here
+	initial begin
+		#2;
+		
+		// TEST 1 -> Check initial state of processor
+		
+		// modify expected register values to be all 16'd0;
+		exp_initial_state;
+		
+		#2;
+		
+		// test initial processor state and values
+		check_states;
+		test_count = test_count + 1;
+		
+		#2;
+		
+		
+		
+		// TEST 2-> Check reset works
+		
+		// force value
+		rst_force_logic;
+		rst_proc = 1'd1;
+		
+		@(posedge clk_proc) begin
+			// wait for values to settle
+			#2;
+			
+			// reset should set everythign back to initial states
+			check_states;
+			test_count = test_count + 1;
+		
+		end
+		
+		
+		/*
+			movi
+			add
+			addi
+			sub
+			
+			immediate type instructions first then reg to reg
+		*/
+		
+		
+		// TEST 3 -> MOVI
+		
+		
+	
+	
+	
+	end
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	task check_states;
+		reg error_found;
+	
+		begin
+			error_found = 1'b0;
+			
+			// test current reg values equal expected reg values
+			for (i=0; i<8; i=i+1) begin
+			
+				if (currentRegVal[i] !== expRegVal[i]) begin
+				
+					$display(
+					"Register value mismatch error! \n Register %d: Expected %b, got %b",
+					i,
+					expRegVal[i],
+					currentRegVal[i]
+					);
+					
+					error_found = 1'b1;
+					
+				end
+				
+			end
+			
+			// test fsm state
+			
+				if (current_tick !== expCurTick) begin
+				
+					$display(
+					"FSM state error! \n Expected initial state %b, got %b",
+					expCurTick,
+					current_tick
+					);
+					
+					error_found = 1'b1;
+					
+				end
+				
+				// add error if either error occurred
+				if (error_found) errors = errors + 1;
+				
+		
+		end
+	
+	endtask
+	
+	
+	
+	task check_values;
+	
 		begin
 		
 		end
 	
 	endtask
+	
+	// how do we minimise the checking of the regs of the ones that shouldnt change? minimise it all into one task
+	// loop task have input parameters as the output_Reg and also exp value for each reg (usually 0)
+	
+	// ok actual general workflow
+	// task for checking instruciton/state
+	// 1d array to check the reg values at that state 
+	// use a function block to check that the values match, and then you can display error if or if not
+	// task -> instruction/state executed -> function to check correct values -> error message, yes or no
+	
+	
+	
+	task exp_initial_state;
+	
+	// use a for loop to assign expected values for reg to be 0
+		begin
+		
+			expCurTick = 4'b0001;
+			
+			for (i=0; i<8; i=i+1) begin
+				expRegVal[i] = 16'b0;
+			end
+		
+		end
+	
+	endtask
+	
+	
+	
+	task rst_force_logic;
+	
+		begin
+		
+			// force R0 to be a certain value, and then release so processor can utilise reset
+			force DUT_proc.output_R0 = 16'd1;
+			#2;
+			release DUT_proc.output_R0;
+		
+		end
+	
+	endtask
+	
+	task movi_instruction;
+		begin
+			
+		
+		end
+	
+	endtask
+	
 
 endmodule
