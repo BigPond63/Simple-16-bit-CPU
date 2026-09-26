@@ -307,7 +307,38 @@ module proc_tb;
 		
 		
 		
-		// TEST
+		
+		
+		// TEST 6 -> SUB
+		
+		@(negedge clk_proc) begin
+			expCurTick = 4'b0010;
+			currentDin = 9'b011010001; // 011 010 001: R2 = R2 - R1
+		end
+		
+		// Check tick 1 complete, also advances
+		@(posedge clk_proc) tick_advance;
+		
+		// Modify next tick's next state to be 0100
+		@(negedge clk_proc) expCurTick = 4'b0100;
+		
+		// Do tick 2, advance to tick 4'b0100;
+		@(posedge clk_proc) tick_advance;
+			
+		@(negedge clk_proc) expCurTick = 4'b1000;
+		
+		// Do tick 3, advance to tick 4'b1000;
+		@(posedge clk_proc) tick_advance;
+		
+		@(negedge clk_proc) begin
+			expCurTick = 4'b0001;
+			expRegVal[2] = 16'b1111111111110101; // should be -16'd11 -> a two's complement negative number
+		end
+		
+		// do final tick and tick processor returns back to tick 4'b0001;
+		@(posedge clk_proc) tick_advance;
+		
+		
 		$stop;
 		
 	end
