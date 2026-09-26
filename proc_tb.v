@@ -110,7 +110,7 @@ module proc_tb;
 	
 	reg [0:0] clk_proc = 1'd0;
 	reg [0:0] rst_proc = 1'd0;
-	reg [8:0] current_din;
+	reg [8:0] currentDin;
 	// define 1D array for the register values in the processor
 	wire [15:0] currentRegVal [0:7];
 	
@@ -145,7 +145,7 @@ module proc_tb;
 		// first clk posedge happens at #17-> 22, #27-> 32-> #37
 		forever begin
 			#5;
-			clk_proc = ~clk_proc
+			clk_proc = ~clk_proc;
 			// might be aftr check latr
 		end
 	
@@ -184,7 +184,9 @@ module proc_tb;
 		
 		// force value
 		rst_force_logic;
-		rst_proc = 1'd1;
+		@(posedge clk_proc);
+		
+		@(negedge clk_proc) rst_proc = 1'd1;
 		
 		@(posedge clk_proc) begin
 			// wait for values to settle
@@ -209,10 +211,39 @@ module proc_tb;
 		
 		// TEST 3 -> MOVI
 		
+		@(negedge clk_proc) begin
+			rst_proc = 1'd0;
+			currentDin = 9'b111001000; // 111 001 000 -> Select reg 1 to move an immediate value into
+			expCurTick = 4'b0010; // modify exp tick for next pos edge
+		end
+	
+		@(posedge clk_proc) tick_advance; // current tick should be 0010, awaiting an immediate value
 		
-	
-	
-	
+		@(negedge clk_proc) begin
+			currentDin = 9'b000000111; // load in the value 16'd7 into register 1
+			expRegVal[1] = 16'd7; // modify reg value for reg 1 so it matches test case
+			expCurTick = 4'b0100;
+		end
+		
+		// check that tick 0010 has completed successfully
+		@(posedge clk_proc) tick_advance;
+		
+		@(negedge clk_proc) expCurTick = 4'b1000; // modify exp current tick for tick 4
+		
+		// check tick 0100 has completely successfully
+		@(posedge clk_proc) tick_advance;
+		
+		@(negedge clk_proc) expCurTick = 4'b0001; // modify expected to go back to tick 1
+		
+		// check tick 1000 has completely successfully
+		@(posedge clk_proc) tick_advance;
+		
+		
+		// reset processor and await for next test
+		reset_proc;
+		
+		// TEST 4 -> 
+		
 	end
 	
 	
@@ -260,7 +291,7 @@ module proc_tb;
 				if (current_tick !== expCurTick) begin
 				
 					$display(
-					"FSM state error! \n Expected initial state %b, got %b",
+					"FSM state error! \n Expected state %b, got %b",
 					expCurTick,
 					current_tick
 					);
@@ -279,13 +310,6 @@ module proc_tb;
 	
 	
 	
-	task check_values;
-	
-		begin
-		
-		end
-	
-	endtask
 	
 	// how do we minimise the checking of the regs of the ones that shouldnt change? minimise it all into one task
 	// loop task have input parameters as the output_Reg and also exp value for each reg (usually 0)
@@ -319,22 +343,51 @@ module proc_tb;
 	
 		begin
 		
-			// force R0 to be a certain value, and then release so processor can utilise reset
+			// force Registers to be a certain value, and then release so processor can utilise reset
+			
 			force DUT_proc.output_R0 = 16'd1;
+			force DUT_proc.output_R1 = 16'd1;
+			force DUT_proc.output_R2 = 16'd1;
+			force DUT_proc.output_R3 = 16'd1;
+			force DUT_proc.output_R4 = 16'd1;
+			force DUT_proc.output_R5 = 16'd1;
+			force DUT_proc.output_R6 = 16'd1;
+			force DUT_proc.output_R7 = 16'd1;
 			#2;
 			release DUT_proc.output_R0;
+			release DUT_proc.output_R1;
+			release DUT_proc.output_R2;
+			release DUT_proc.output_R3;
+			release DUT_proc.output_R4;
+			release DUT_proc.output_R5;
+			release DUT_proc.output_R6;
+			release DUT_proc.output_R7;
 		
 		end
 	
 	endtask
 	
-	task movi_instruction;
+	task tick_advance;
 		begin
-			
-		
+			#2;
+			check_states;
+			test_count = test_count + 1;
 		end
 	
 	endtask
 	
-
+	task reset_proc;
+	
+		begin
+			@(negedge clk_proc) rst_proc = 1'd1;
+			@(posedge clk_proc);
+			@(negedge clk_proc) rst_proc = 1'd0;
+			
+			// reset all exp values of state of proc
+			exp_initial_state;
+		end
+	
+	
+	endtask
+	
 endmodule
