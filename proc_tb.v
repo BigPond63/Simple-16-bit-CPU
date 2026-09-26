@@ -271,6 +271,43 @@ module proc_tb;
 		// Check tick 4 success, and that tick goes to 4'b0001
 		@(posedge clk_proc) tick_advance;
 		
+		
+		
+		
+		
+		// TEST 5 -> ADD
+		
+		@(negedge clk_proc) begin
+			currentDin = 9'b001000001; // 001 000 001 -> Add the value of R1 into R0 
+			expCurTick = 4'b0010;
+		end
+		
+		// Check tick 1 complete, also advances
+		@(posedge clk_proc) tick_advance;
+		
+		
+		// Modify next tick's next state to be 0100
+		@(negedge clk_proc) expCurTick = 4'b0100;
+		
+		// Do tick 2, advance to tick 4'b0100;
+		@(posedge clk_proc) tick_advance;
+			
+		@(negedge clk_proc) expCurTick = 4'b1000;
+		
+		// Do tick 3, advance to tick 4'b1000;
+		@(posedge clk_proc) tick_advance;
+		
+		@(negedge clk_proc) begin
+			expCurTick = 4'b0001;
+			expRegVal[0] = 16'd11; // should match the same as reg 1
+		end
+		
+		// do final tick and tick processor returns back to tick 4'b0001;
+		@(posedge clk_proc) tick_advance;
+		
+		
+		
+		// TEST
 		$stop;
 		
 	end
