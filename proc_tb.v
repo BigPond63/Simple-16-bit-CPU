@@ -239,10 +239,39 @@ module proc_tb;
 		@(posedge clk_proc) tick_advance;
 		
 		
-		// reset processor and await for next test
-		reset_proc;
 		
-		// TEST 4 -> 
+		// TEST 4 -> ADDI
+		@(negedge clk_proc) begin
+			currentDin = 9'b010001000; // 010 001 000 -> add an immediate value into reg 1
+			expCurTick = 4'b0010;
+		end
+		
+		@(posedge clk_proc) tick_advance; // current tick should be 0010, awaiting an immediate value
+		
+		@(negedge clk_proc) begin
+			currentDin = 9'b000000100; // 000 000 100 -> 16'd4
+			expCurTick = 4'b0100;
+		end
+		
+		// check that tick 2 has completed successfully tick goes onto 0100
+		@(posedge clk_proc) tick_advance;
+		
+		@(negedge clk_proc) begin
+			expCurTick = 4'b1000;
+		end
+		
+		// check that tick 3 has completed successfully tick goes onto 1000
+		@(posedge clk_proc) tick_advance;
+		
+		@(negedge clk_proc) begin
+			expCurTick = 4'b0001;
+			expRegVal[1] = 16'd11; // since reg 1 had value of 7, now added 4 = 11
+		end
+		
+		// Check tick 4 success, and that tick goes to 4'b0001
+		@(posedge clk_proc) tick_advance;
+		
+		$stop;
 		
 	end
 	

@@ -13,14 +13,4 @@ Top level modules:
 	ALU
 	register_n
 
-} {} {}} C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v {1 {vlog -work work -stats=none C:/Users/ziggy/Documents/ECE2072/Project/components_tb.v
-Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
--- Compiling module fsm_tb
--- Compiling module register_tb
--- Compiling module register_tb_checker
--- Compiling module components_tb
-
-Top level modules:
-	components_tb
-
 } {} {}}
