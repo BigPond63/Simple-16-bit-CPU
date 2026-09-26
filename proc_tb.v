@@ -83,7 +83,28 @@ module proc_tb;
 	
 	*/
 	// make sure variables are fresh each time, and if we run task twice vairables aren't saved from last tim e
-	task automatic initial_proc_state;
+	
+	reg [0:0] clk_proc;
+	
+	// in/out
+	
+	// SINGLE COMMAND (ARRAYS)
+	// reg and all values at tick 1
+	// reg and all values at tick 2
+	// reg and all values at tick 3
+	// reg and all values at tick 4
+	
+	// next command all reg and all values at all ticks 
+	
+	// clk, rst, bus, R0, R1, R2, R3, R4, R5, R6, R7, FSM_tick
+	// 
+	reg [16:0] correct_states [0:0]; 
+	
+	
+	
+	
+	
+	task initial_proc_state;
 		
 		begin
 		

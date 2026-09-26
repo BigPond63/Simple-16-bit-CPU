@@ -185,7 +185,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, FSM_tick)
 	 tick_FSM fsm_ins0 (
 		.rst(rst),
 		.clk(clk),
-		.enable(1),
+		.enable(1'd1),
 		.tick(tick_fsm_out)
 	);
 	
