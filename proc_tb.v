@@ -338,17 +338,22 @@ module proc_tb;
 		// do final tick and tick processor returns back to tick 4'b0001;
 		@(posedge clk_proc) tick_advance;
 		
+		$display("SUMMARY OF SIMPLE PROCESSOR TEST BENCH");
+		
+		$display(
+			"Errors: %d",
+			errors
+			);
+			
+		$display(
+			"Tests conducted: %d",
+			test_count
+			);
+		
 		
 		$stop;
 		
 	end
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
