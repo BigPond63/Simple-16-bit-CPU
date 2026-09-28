@@ -841,9 +841,9 @@ end
 	 // End simulation when done flags are 1
     always begin
         #1;
-        if (done_se && done_alu) begin
+        if (done_se && done_alu && done_mux && done_reg && done_fsm) begin
             $display("All testbenches complete.");
-            forever #1; // idle until al ltest done with flag
+            forever #1; // idle until all test done with flag
         end
     end
 	 
