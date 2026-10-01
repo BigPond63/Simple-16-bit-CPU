@@ -97,6 +97,7 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		// tb statistics
 		count_fsm = 32'd0;
 		errors_fsm = 32'd0;
+		reg done_fsm = 0;
 	end
 	
 	// test that fsm starts at the initial state
@@ -109,7 +110,7 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 			#10;
 			
 			if (errors_fsm == 32'd0) $display("Success for fsm testbench!");
-			$stop;
+			done_fsm = 1;
 			
 		end
 		#1;
@@ -410,6 +411,8 @@ module register_tb(clk_reg);
 	
 	integer count_reg, errors_reg;
 	
+	reg done_reg = 0;
+	
 	// initialise values
 	initial begin
 		count_reg = 32'd0;
@@ -445,7 +448,7 @@ module register_tb(clk_reg);
 			
 			if (errors_reg == 32'd0) $display("Success for register TB!");
 			forever #1;
-			
+			done_reg = 1;
 		end
 	
 	#1;
@@ -693,15 +696,15 @@ module components_tb;
 
 		 initial begin
 		  test_a_alu[0]=16'd6;    test_b_alu[0]=16'd7;    test_op_alu[0]=3'b000; exp_alu[0]=16'd42;    // multiply: basic
-		  test_a_alu[1]=16'd1000; test_b_alu[1]=16'd1000; test_op_alu[1]=3'b000; exp_alu[1]=16'h4240;  // multiply: overflow
+		  test_a_alu[1]=16'd1000; test_b_alu[1]=16'd1000; test_op_alu[1]=3'b000; exp_alu[1]=16'd16960;  // multiply: overflow
 		  test_a_alu[2]=16'd100;  test_b_alu[2]=16'd25;   test_op_alu[2]=3'b001; exp_alu[2]=16'd125;   // add: basic
-		  test_a_alu[3]=16'd32767;test_b_alu[3]=16'd1;    test_op_alu[3]=3'b001; exp_alu[3]=16'h8000;  // add: overflow
+		  test_a_alu[3]=16'd32767;test_b_alu[3]=16'd1;    test_op_alu[3]=3'b001; exp_alu[3]=16'd32768;  // add: overflow
 		  test_a_alu[4]=16'd50;   test_b_alu[4]=16'd20;   test_op_alu[4]=3'b010; exp_alu[4]=16'd30;    // subtract: basic
-		  test_a_alu[5]=16'd5;    test_b_alu[5]=16'd10;   test_op_alu[5]=3'b010; exp_alu[5]=16'hFFFB;  // subtract: negative result
+		  test_a_alu[5]=16'd5;    test_b_alu[5]=16'd10;   test_op_alu[5]=3'b010; exp_alu[5]=16'd65531;  // subtract: negative result
 		  test_a_alu[6]=16'd2;    test_b_alu[6]=16'd6;    test_op_alu[6]=3'b011; exp_alu[6]=16'd24;    // shift: left
-		  test_a_alu[7]=-16'd1;   test_b_alu[7]=-16'd6;   test_op_alu[7]=3'b011; exp_alu[7]=16'hFFFD;  // shift: signed right
-		  test_a_alu[8]=16'd1;    test_b_alu[8]=16'd1;    test_op_alu[8]=3'b101; exp_alu[8]=16'h0000;  // don't-care opcode
-		  test_a_alu[9]=-16'd1;   test_b_alu[9]=-16'd1;   test_op_alu[9]=3'b001; exp_alu[9]=16'hFFFE;  // add: negative operands
+		  test_a_alu[7]=-16'd1;   test_b_alu[7]=-16'd6;   test_op_alu[7]=3'b011; exp_alu[7]=16'd65533;  // shift: signed right
+		  test_a_alu[8]=16'd1;    test_b_alu[8]=16'd1;    test_op_alu[8]=3'b101; exp_alu[8]=16'd0;  // don't-care opcode
+		  test_a_alu[9]=-16'd1;   test_b_alu[9]=-16'd1;   test_op_alu[9]=3'b001; exp_alu[9]=16'd65534;  // add: negative operands
  
 		  // Load first test case
 		  input_a_alu = test_a_alu[0];
