@@ -43,6 +43,8 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 	
 	integer errors_fsm, count_fsm;
 	integer i;
+	reg done_fsm = 0;
+
 
 	// initial inputs
 	initial begin
@@ -97,7 +99,6 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		// tb statistics
 		count_fsm = 32'd0;
 		errors_fsm = 32'd0;
-		reg done_fsm = 0;
 	end
 	
 	// test that fsm starts at the initial state
@@ -111,7 +112,7 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 			
 			if (errors_fsm == 32'd0) $display("Success for fsm testbench!");
 			done_fsm = 1;
-			
+			forever #1;
 		end
 		#1;
 	end
@@ -447,8 +448,9 @@ module register_tb(clk_reg);
 			#10;
 			
 			if (errors_reg == 32'd0) $display("Success for register TB!");
-			forever #1;
 			done_reg = 1;
+			forever #1;
+			
 		end
 	
 	#1;
@@ -641,6 +643,8 @@ module components_tb;
             else begin
                 $display("Number of Errors: %d", errors_se);
             end
+				
+				done_se = 1;
 
             // Stop the test bench, idle
             forever #1;
@@ -844,7 +848,7 @@ end
 	 // End simulation when done flags are 1
     always begin
         #1;
-        if (done_se && done_alu && done_mux && done_reg && done_fsm) begin
+        if (done_se && done_alu && done_mux && my_reg.done_reg && my_tb.done_fsm) begin
             $display("All testbenches complete.");
             forever #1; // idle until all test done with flag
         end
