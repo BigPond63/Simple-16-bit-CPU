@@ -38,18 +38,6 @@ assign HEX2_wire = bcd_wire[11:8];
 assign HEX1_wire = bcd_wire[7:4];
 assign HEX0_wire = bcd_wire[3:0];
 
-/*
-module ROM1P_Q9_65536 (
-	address,
-	clock,
-	q);
-
-	input	[15:0]  address;
-	input	  clock;
-	output	[8:0]  q;
-
-*/
-
 
 proc_memory memory_ins0(
 	.clk(tick),
@@ -76,7 +64,7 @@ clock_div_4hz clock4hz (
 */
 
 
-ROM1P_Q9_65536 ROM1P_ins0 (
+ROM ROM1P_ins0 (
 	.address(pc_address),
 	.clock(CLOCK_50),
 	.q(din)

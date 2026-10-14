@@ -1,6 +1,7 @@
 module memory_top_level (
 	input [9:0] SW,
 	input [1:0] KEY,
+	input CLOCK_50,
 	output [9:0] LEDR,
 	
 	output [7:0] HEX0,
@@ -22,6 +23,9 @@ wire [3:0] HEX1_wire;
 wire [3:0] HEX2_wire;
 wire [3:0] HEX3_wire;
 wire [3:0] HEX4_wire;
+wire [0:0] ten_hz_tick;
+wire [8:0] instruction;
+wire [15:0] current_address;
 
 
 assign LEDR = bus_wire[9:0];
@@ -33,27 +37,31 @@ assign HEX1_wire = bcd_wire[7:4];
 assign HEX0_wire = bcd_wire[3:0];
 
 
-proc_extension proc_ext_ins0 (
-	.clk(~KEY[1]),
-	.rst(~KEY[0]),
+proc_memory proc_memory_ins0 (
+	.clk(ten_hz_tick),
+	.rst(~KEY[0] && SW[9]),
 	.enable(SW[9]),
-	.din(SW[8:0]),
+	.din(instruction),
 	.bus(bus_wire),
-	.R0(fsm_state),
-	.display(display_wire)
+	.fsm_tick(fsm_state),
+	.display(display_wire),
+	.pc_addr(current_address)
 );
 
 
+clock_div_10hz ten_hz_ins0(
+	.clk(CLOCK_50),
+	.tick(ten_hz_tick)
+);
 
-/*
-hex_real hex_ins0 (
-	.one_hot_state(hex_wire),
-	.HEX0(HEX0),
-	.HEX1(HEX1),
-	.HEX2(HEX2),
-	.HEX3(HEX3)
-	);
-*/
+
+ROM1P_65536_test memory_ins0(
+	.address(current_address),
+	.clock(CLOCK_50),
+	.q(instruction)
+);
+
+
 
 binary_to_bcd bcd_ins0 (
 	.binary(display_wire),

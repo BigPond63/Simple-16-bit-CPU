@@ -227,7 +227,7 @@ def construct_mif(outputFileName: str, instructionBinary: List[str]) -> None:
     f = open(outputFileName, "w")
 
     # Header information
-    headerString = "DEPTH = 32768;\nWIDTH = 9;\nADDRESS_RADIX = DEC;\nDATA_RADIX = BIN;\nCONTENT\nBEGIN\n"
+    headerString = "DEPTH = 65536;\nWIDTH = 9;\nADDRESS_RADIX = DEC;\nDATA_RADIX = BIN;\nCONTENT\nBEGIN\n"
 
     # Footer information
     footerString = "END;\n"

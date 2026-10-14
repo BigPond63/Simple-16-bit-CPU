@@ -340,13 +340,11 @@ module proc_tb;
 		
 		$display("SUMMARY OF SIMPLE PROCESSOR TEST BENCH");
 		
-		$display(
-			"Errors: %d",
+		$display("Errors: %d",
 			errors
 			);
 			
-		$display(
-			"Tests conducted: %d",
+		$display("Tests conducted: %d",
 			test_count
 			);
 		
@@ -378,7 +376,8 @@ module proc_tb;
 				if (currentRegVal[i] !== expRegVal[i]) begin
 				
 					$display(
-					"Register value mismatch error! \n Register %d: Expected %b, got %b",
+					"Time: %0t Register value mismatch error! \n Register %d: Expected %b, got %b",
+					$time,
 					i,
 					expRegVal[i],
 					currentRegVal[i]
@@ -395,7 +394,8 @@ module proc_tb;
 				if (current_tick !== expCurTick) begin
 				
 					$display(
-					"FSM state error! \n Expected state %b, got %b",
+					"Time: %0t FSM state error! \n Expected state %b, got %b",
+					$time,
 					expCurTick,
 					current_tick
 					);

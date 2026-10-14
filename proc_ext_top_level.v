@@ -1,4 +1,4 @@
-module proc_top_level (
+module proc_ext_top_level (
 	input [9:0] SW,
 	input [1:0] KEY,
 	output [9:0] LEDR,

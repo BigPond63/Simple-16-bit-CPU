@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
-set_global_assignment -name TOP_LEVEL_ENTITY simp_proc_top_level
+set_global_assignment -name TOP_LEVEL_ENTITY test_IP
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "18:35:42  SEPTEMBER 10, 2026"
 set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
@@ -50,7 +50,6 @@ set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name VERILOG_FILE components.v
 set_global_assignment -name VERILOG_FILE proc.v
-set_global_assignment -name VERILOG_FILE proc_top_level.v
 set_location_assignment PIN_AA14 -to GPIO[12]
 set_location_assignment PIN_AA15 -to GPIO[11]
 set_location_assignment PIN_W5 -to GPIO[10]
@@ -243,9 +242,6 @@ set_global_assignment -name EDA_SIMULATION_TOOL "<None>"
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT NONE -section_id eda_simulation
 set_global_assignment -name VERILOG_FILE simp_proc_top_level.v
 set_global_assignment -name VERILOG_FILE proc_memory.v
-set_global_assignment -name QIP_FILE ROM1P_Q9_32768.qip
-set_global_assignment -name QIP_FILE ROM1P_Q9_65536.qip
-set_global_assignment -name VERILOG_FILE memory_top_level.v
 set_global_assignment -name VERILOG_FILE test_IP.v
 set_global_assignment -name VERILOG_FILE clock_10hz.v
 set_global_assignment -name VERILOG_FILE mux_PC.v
@@ -259,9 +255,12 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name VERILOG_FILE clock_div_4hz.v
-set_global_assignment -name VERILOG_FILE output_files/proc_com.v
 set_global_assignment -name VERILOG_FILE components_tb.v
 set_global_assignment -name VERILOG_FILE proc_tb.v
+set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
+set_global_assignment -name VERILOG_FILE proc_ext_top_level.v
+set_global_assignment -name VERILOG_FILE proc_com.v
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
@@ -450,6 +449,5 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[1]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[2]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[3]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_VS
-set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
-set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
+set_global_assignment -name QIP_FILE ROM.qip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
