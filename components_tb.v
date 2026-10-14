@@ -375,7 +375,7 @@ module register_tb(clk_reg);
 	register_tb_checker #(.CHECKER_WIDTH(REGISTER_WIDTH)) reg_checker (
 		.reg_value(output_reg),
 		.exp_reg(exp_cur),
-		.error_reg(error_value)
+		.error_check(error_value)
 		);
 	
 	integer count_reg, errors_reg;
@@ -417,7 +417,7 @@ module register_tb(clk_reg);
 			
 			if (errors_reg == 32'd0) $display("Success for register TB!");
 			done_reg = 1;
-			forever #1;
+			forever #1; // to ensure to wait for other tb
 			
 		end
 	
@@ -489,13 +489,13 @@ module register_tb(clk_reg);
 					DUT_reg.Q_reg <= {REGISTER_WIDTH{1'd1}};
 					exp_cur <= {REGISTER_WIDTH{1'd1}};
 					rst_reg <= 1'd1;
-					rin_reg <= 1'd1;
+					rin_reg <= 1'd0;
 	
 			end
 	
 			#2;
 			// do test case without clock;
-			count_reg <= count_reg + 32'd1;
+			
 
 			if (error_value == 32'd1) begin
 				$display("Time: %0t Register changed without Clock Error: Expected %b, got: %b",
@@ -503,22 +503,30 @@ module register_tb(clk_reg);
 				errors_reg = errors_reg + error_value;
 			end
 			
+			count_reg <= count_reg + 32'd1;
+			
+			/* reset values back to 1'd0, so combinational logic of error checker doesn't 
+			give a value of 1 before the next posedge
+			*/
+			#1;
+			rst_reg = 1'd0;
+			rin_reg = 1'd0;
 		end
 
 	
 endmodule
 
-module register_tb_checker(reg_value, exp_reg, error_reg);
+module register_tb_checker(reg_value, exp_reg, error_check);
 	parameter CHECKER_WIDTH = 16; // default is 16, but can be overridded to be equated to REGISTER_WIDTH
 	
 	input [CHECKER_WIDTH-1:0] reg_value;
 	input [CHECKER_WIDTH-1:0] exp_reg;
-	output reg [31:0] error_reg;
+	output reg [31:0] error_check;
 	
 	always @(*) begin
 		if (reg_value !== exp_reg) begin
-			error_reg = 32'd1;
-		end else error_reg = 32'd0;
+			error_check = 32'd1;
+		end else error_check = 32'd0;
 	
 	end
 	
@@ -535,7 +543,7 @@ module components_tb;
 	end
 
 	fsm_tb my_tb(.clk_fsm(clk_tb));
-	register_tb #(.Z(16)) my_reg(.clk_reg(clk_tb));
+	register_tb #(.REGISTER_WIDTH(16)) my_reg(.clk_reg(clk_tb));
 
 
 	
@@ -818,7 +826,7 @@ end
         #1;
         if (done_se && done_alu && done_mux && my_reg.done_reg && my_tb.done_fsm) begin
             $display("All testbenches complete.");
-            forever #1; // idle until all test done with flag
+            $stop;
         end
     end
 	 
