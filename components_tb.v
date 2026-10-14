@@ -1,4 +1,4 @@
-`timescale 1ns/1ns
+`timescale 1ns/1ps
 /*
 Monash University ECE2072: Assignment 
 This file contains a Verilog test bench to test the correctness of the individual 
@@ -110,7 +110,7 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		if (count_fsm == 32'd25) begin
 			#10;
 			
-			if (errors_fsm == 32'd0) $display("Success for fsm testbench!");
+			if (errors_fsm == 32'd0) $display("Success for FSM Testbench!");
 			done_fsm = 1;
 			forever #1;
 		end
@@ -415,7 +415,7 @@ module register_tb(clk_reg);
 		if (count_reg == 32'd4) begin
 			#10;
 			
-			if (errors_reg == 32'd0) $display("Success for register TB!");
+			if (errors_reg == 32'd0) $display("Success for Register Testbench!");
 			done_reg = 1;
 			forever #1; // to ensure to wait for other tb
 			
@@ -614,7 +614,7 @@ module components_tb;
                and state how many errors occurred. */
 
             if (errors_se == 0) begin
-                $display("success");
+                $display("Success for Sign Extender Testbench!");
             end
             else begin
                 $display("Number of Errors: %d", errors_se);
@@ -709,7 +709,7 @@ module components_tb;
 		  if (test_count_alu == 10 && !done_alu) begin
 				done_alu = 1;
 				if (errors_alu == 0)
-					 $display("ALU: success");
+					 $display("Success for ALU Testbench!");
 				else
 					 $display("ALU: Number of Errors: %d", errors_alu);
 		  end
@@ -800,7 +800,7 @@ end
         if (test_count_mux == 16 && !done_mux) begin
             done_mux = 1;
             if (errors_mux == 0)
-                $display("MUX: success");
+                $display("Success for MUX Testbench!");
             else
                 $display("MUX: Number of Errors: %d", errors_mux);
         end

@@ -1,4 +1,4 @@
-`timescale 1ns/1ns
+`timescale 1ns/1ps
 /*
 Monash University ECE2072: Assignment 
 This file contains a Verilog test bench to test the correctness of the processor.
