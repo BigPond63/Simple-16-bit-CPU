@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
-set_global_assignment -name TOP_LEVEL_ENTITY proc_top_level
+set_global_assignment -name TOP_LEVEL_ENTITY simp_proc_top_level
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "18:35:42  SEPTEMBER 10, 2026"
 set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
@@ -239,8 +239,8 @@ set_location_assignment PIN_AA2 -to GPIO[35]
 set_global_assignment -name VERILOG_FILE proc_extension.v
 set_global_assignment -name VERILOG_FILE bcd_display_rx.v
 set_global_assignment -name VERILOG_FILE fsm_state_hex_decoder.v
-set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
-set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
+set_global_assignment -name EDA_SIMULATION_TOOL "<None>"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT NONE -section_id eda_simulation
 set_global_assignment -name VERILOG_FILE simp_proc_top_level.v
 set_global_assignment -name VERILOG_FILE proc_memory.v
 set_global_assignment -name QIP_FILE ROM1P_Q9_32768.qip
@@ -262,6 +262,9 @@ set_global_assignment -name VERILOG_FILE clock_div_4hz.v
 set_global_assignment -name VERILOG_FILE output_files/proc_com.v
 set_global_assignment -name VERILOG_FILE components_tb.v
 set_global_assignment -name VERILOG_FILE proc_tb.v
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ADC_CLK_10
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ARDUINO_IO[10]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ARDUINO_IO[11]
@@ -447,7 +450,6 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[1]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[2]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[3]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_VS
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

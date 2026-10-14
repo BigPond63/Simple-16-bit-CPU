@@ -240,7 +240,7 @@ module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, FSM_tick)
 						  store bus value into reg A
 						  assume rx = r0, ry = r1
 						  */
-						case (output_IR[8:6]) 
+						case (output_IR[8:6]) // xxx xxx xxx -> opcode, register, register
 							// addition store into A
 							3'd1: begin
 								A_in = 1'b1;

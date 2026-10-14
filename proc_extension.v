@@ -223,7 +223,7 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
     
     // input to control unit -> current instruction and tick FSM output
     // TODO: define control unit:
-    always @(tick_fsm_out || output_IR) begin
+    always @(tick_fsm_out, output_IR) begin
         // TODO: Turn off all control signals:
 		  R_in = 8'b0;
 		  A_in = 1'b0;

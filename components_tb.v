@@ -23,9 +23,9 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 	wire [3:0] tick_fsm;
 	
 	reg [3:0] exp_initial;
-	reg [3:0] exp_rst; //vectorsize];
+	reg [3:0] exp_rst; 
 	reg [3:0] exp_cycle [0:3];
-	reg [3:0] illegal_state [0:11];
+	reg [3:0] illegal_state [0:11]; //
 	reg [3:0] exp_clk_low;
 	reg [3:0] exp_rst_en;
 	reg [3:0] exp_rst_en_cycle [0:1];
@@ -114,6 +114,7 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 			done_fsm = 1;
 			forever #1;
 		end
+		
 		#1;
 	end
 
@@ -123,11 +124,9 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		#8;
 				// check initial fsm state
 		if (tick_fsm !== exp_initial) begin
-			$display("FAIL: initial state expected: %b, got %b",
-				exp_initial, tick_fsm);
-			$display(
-			"WARNING: Future test cases will be affected by the dysfunctionality of the initial state"
-			);
+			$display("Time: %0t FAIL: initial state expected: %b, got %b",
+				$time, exp_initial, tick_fsm);
+			$display("WARNING: Future test cases will be affected by the dysfunctionality of the initial state");
 			
 			errors_fsm = errors_fsm + 32'd1;
 		end
@@ -150,14 +149,15 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 			@(posedge clk_fsm) begin
 				#2; // wait, to let fsm settle 
 				if (tick_fsm !== exp_cycle[i]) begin
-					$display("Cycle fail: State expected: %b, got %b",
-						exp_cycle[i], tick_fsm);
+					$display("Time: %0t Cycle fail: State expected: %b, got %b",
+						$time, exp_cycle[i], tick_fsm);
 					errors_fsm = errors_fsm + 32'd1;
 				end
 				
 				count_fsm = count_fsm + 32'd1;
 		
 				end
+				
 			end
 		
 		// PREPARE FOR NEXT TEST (RST ONLY)
@@ -169,15 +169,13 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		@(posedge clk_fsm) begin
 			#2 // wait for fsm to settle
 			if (tick_fsm !== exp_rst) begin
-				$display("Fail: Reset state expected: %b, got %b",
-					exp_rst, tick_fsm);
-				$display(
-				"WARNING: Future test cases will be affected by the dysfunction of the reset"
-				);
-				errors_fsm = errors_fsm + 1;
+				$display("Time: %0t Fail: Reset state expected: %b, got %b",
+					$time, exp_rst, tick_fsm);
+				$display("WARNING: Future test cases will be affected by the dysfunction of the reset");
+				errors_fsm <= errors_fsm + 1;
 			end
 			
-			count_fsm = count_fsm + 1;
+			count_fsm <= count_fsm + 1;
 		end
 		
 		// PREPARE FOR NEXT TEST (RST AND EN RACE CONDITION)
@@ -189,12 +187,12 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		@(posedge clk_fsm) begin
 			#2
 			if (tick_fsm !== exp_rst_en) begin
-				$display("Reset enable race condition fail: State expected %b, got %b",
-					4'b0001, tick_fsm);
-				errors_fsm = errors_fsm + 32'd1;
+				$display("Time: %0t Reset enable race condition fail: State expected %b, got %b",
+					$time, exp_rst_en, tick_fsm);
+				errors_fsm <= errors_fsm + 32'd1;
 			end
 			
-			count_fsm = count_fsm + 32'd1;
+			count_fsm <= count_fsm + 32'd1;
 		
 		end
 		
@@ -224,12 +222,12 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 			@(posedge clk_fsm) begin
 				#2;
 				if (tick_fsm !== exp_rst_en_cycle[i]) begin
-					$display("Half cycle reset fail: State expected %b, got %b",
-						exp_rst_en_cycle[i], tick_fsm);
-					errors_fsm = errors_fsm + 32'd1;
+					$display("Time: %0t Half cycle reset fail: State expected %b, got %b",
+						$time, exp_rst_en_cycle[i], tick_fsm);
+					errors_fsm <= errors_fsm + 32'd1;
 				end
 				
-				count_fsm = count_fsm + 32'd1;
+				count_fsm <= count_fsm + 32'd1;
 			end
 			
 		end
@@ -241,7 +239,10 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 			rst_fsm <= 1'd1;
 		end
 		
-		@(posedge clk_fsm) #2 rst_fsm <= 1'd0;
+		@(posedge clk_fsm) begin
+			#2;
+			rst_fsm <= 1'd0;
+		end
 		
 		// SET UP VARIABLES FOR NEXT CLOCK CYCLE
 		@(negedge clk_fsm) begin
@@ -259,12 +260,12 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 			@(posedge clk_fsm) begin
 				#2;
 				if (tick_fsm !== exp_sequence[i]) begin
-					$display("Sequence reset fail: State expected %b, got %b",
-						exp_sequence[i], tick_fsm);
-					errors_fsm = errors_fsm + 1;
+					$display("Time: %0t Sequence reset fail: State expected %b, got %b",
+						$time, exp_sequence[i], tick_fsm);
+					errors_fsm <= errors_fsm + 1;
 				end
 				
-				count_fsm = count_fsm + 1;
+				count_fsm <= count_fsm + 1;
 			
 			end
 			
@@ -290,11 +291,11 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		
 		if (tick_fsm !== exp_clk_low) begin
 			$display("Clock input low fail: State expected: %b, got %b",
-				4'b0001, tick_fsm);
-			errors_fsm = errors_fsm + 1;
+				exp_clk_low, tick_fsm);
+			errors_fsm <= errors_fsm + 1;
 		end
 		
-		count_fsm = count_fsm + 1;
+		count_fsm <= count_fsm + 1;
 		
 	end
 	
@@ -312,18 +313,19 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 	end
 	
 	for (i=0; i<12; i=i+1) begin
-		// hierarchal assignment
+	
+		// hierarchal assignment 'apply' a value for testing
 		@(negedge clk_fsm) DUT_fsm.tick_reg = illegal_state[i];
 		
 		@(posedge clk_fsm) begin
 			#2;
 			if (tick_fsm !== 4'b0001) begin
-				$display("Illegal state recovery fail: State expected: %b, got %b",
-					4'b0001, tick_fsm);
-				errors_fsm = errors_fsm + 1;
+				$display("Time: %0t Illegal state recovery fail: State expected: %b, got %b",
+					$time, 4'b0001, tick_fsm);
+				errors_fsm <= errors_fsm + 1;
 			end
 			
-			count_fsm = count_fsm + 1;
+			count_fsm <= count_fsm + 1;
 		end
 		
 	end
@@ -333,69 +335,35 @@ module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should 
 		
 endmodule
 	 
-	 /* MUX
-	 
-		- check each one goes to where it is suppose to go
-		- check illegal selects
-		- check that all other values are not changed when selecting 
-	 
-	 */
-	 
-	 
 
-
-	 
-	 // ALU
-		// ADD -> ripple carry adder no
-		
-		// SUB -> ripple carry adder 
-		
-		
-		// probably just increment values of a and b by 1 
-		// A-B = 0
-		// A-B = neg
-		// A + B = overflow
-		// 
-		
-	/*
-		add
-		- positive + positive check
-		- overflow 
-		sub 
-		- what hapens wtih sub
-		- negative result?
-		- all zeros + all zeros
-		- all ones + all ones
-	*/
-		
 
 	
 	
 
 module register_tb(clk_reg);
 
-	parameter Z=16;
+	parameter REGISTER_WIDTH=16;
 	
 	//io
 	input [0:0] clk_reg;
 	
-	reg [Z-1:0] din_reg;
+	reg [REGISTER_WIDTH-1:0] din_reg;
 	reg [0:0] rin_reg;
 	reg [0:0] rst_reg;
 	
-	wire [Z-1:0] output_reg;
+	wire [REGISTER_WIDTH-1:0] output_reg;
 	wire [31:0] error_value;
 	
 	
-	reg [Z-1:0] exp_cur;
-	reg [Z-1:0] exp_initial;
-	reg [Z-1:0] exp_rin_value;
+	reg [REGISTER_WIDTH-1:0] exp_cur;
+	reg [REGISTER_WIDTH-1:0] exp_initial;
+	reg [REGISTER_WIDTH-1:0] exp_rin_value;
 	
 	
 	
 	
 	// instantiate module to be tested
-	register_n #(.N(Z)) DUT_reg (
+	register_n #(.N(REGISTER_WIDTH)) DUT_reg (
 	.data_in(din_reg),
 	.r_in(rin_reg),
 	.clk(clk_reg),
@@ -404,7 +372,7 @@ module register_tb(clk_reg);
 	);
 	
 	// instantiate checker module
-	register_tb_checker #(.A(Z)) initial_reg_check (
+	register_tb_checker #(.CHECKER_WIDTH(REGISTER_WIDTH)) reg_checker (
 		.reg_value(output_reg),
 		.exp_reg(exp_cur),
 		.error_reg(error_value)
@@ -419,12 +387,12 @@ module register_tb(clk_reg);
 		count_reg = 32'd0;
 		errors_reg = 32'd0;
 		
-		din_reg = {Z{1'd1}}; // set as all ones so that it checks the initial state is working
+		din_reg = {REGISTER_WIDTH{1'd1}}; // set as all ones so that it checks the initial state is working
 		rin_reg = 1'd0;
 		rst_reg = 1'd0;
 		
-		exp_initial = {Z{1'd0}};
-		exp_rin_value = {Z{1'd1}};
+		exp_initial = {REGISTER_WIDTH{1'd0}};
+		exp_rin_value = {REGISTER_WIDTH{1'd1}};
 	end
 	
 	// test initial state
@@ -469,8 +437,8 @@ module register_tb(clk_reg);
 			
 			if (error_value == 32'd1) begin
 				errors_reg <= errors_reg + error_value;
-				$display("Register Error: Expected %b, got: %b",
-					exp_cur, output_reg);
+				$display("Time: %0t Register Error: Expected %b, got: %b",
+					$time, exp_cur, output_reg);
 			end
 		end
 		
@@ -487,20 +455,20 @@ module register_tb(clk_reg);
 			count_reg <= count_reg + 32'd1;
 			
 			if (error_value == 32'd1) begin
-				$display("Register Error: Expected %b, got: %b",
-					exp_cur, output_reg);
+				$display("Time: %0t Register Error: Expected %b, got: %b",
+					$time, exp_cur, output_reg);
 				errors_reg <= errors_reg + error_value;
 			end
 		end
 		
 		// datain value, test race b/w rst and en
 		
-		// force hierarchal assignment
+		// Use hierarchal assignment to manually assign vales to the register
 		@(negedge clk_reg) begin
-			DUT_reg.Q_reg <= {Z{1'd1}}; // force output Q_reg to be that value
+			DUT_reg.Q_reg <= {REGISTER_WIDTH{1'd1}}; // force output Q_reg to be that value
 			rst_reg <= 1'd1;
 			rin_reg <= 1'd1;
-			exp_cur <= {Z{1'b0}};
+			exp_cur <= {REGISTER_WIDTH{1'b0}};
 		end
 		
 		@(posedge clk_reg) begin
@@ -508,8 +476,8 @@ module register_tb(clk_reg);
 			count_reg <= count_reg + 32'd1;
 			
 			if (error_value == 32'd1) begin
-				$display("Register Error: Expected %b, got: %b",
-					exp_cur, output_reg);
+				$display("Time: %0t Register Error: Expected %b, got: %b",
+					$time, exp_cur, output_reg);
 				errors_reg <= errors_reg + error_value;
 			end
 			
@@ -518,8 +486,8 @@ module register_tb(clk_reg);
 		// reset variables and prepare for next test case
 		@(negedge clk_reg) begin
 
-					DUT_reg.Q_reg <= {Z{1'd1}};
-					exp_cur <= {Z{1'd1}};
+					DUT_reg.Q_reg <= {REGISTER_WIDTH{1'd1}};
+					exp_cur <= {REGISTER_WIDTH{1'd1}};
 					rst_reg <= 1'd1;
 					rin_reg <= 1'd1;
 	
@@ -530,9 +498,9 @@ module register_tb(clk_reg);
 			count_reg <= count_reg + 32'd1;
 
 			if (error_value == 32'd1) begin
-				$display("Register Error: Expected %b, got: %b",
-					exp_cur, output_reg);
-				errors_reg <= errors_reg + error_value;
+				$display("Time: %0t Register changed without Clock Error: Expected %b, got: %b",
+					$time, exp_cur, output_reg);
+				errors_reg = errors_reg + error_value;
 			end
 			
 		end
@@ -541,10 +509,10 @@ module register_tb(clk_reg);
 endmodule
 
 module register_tb_checker(reg_value, exp_reg, error_reg);
-	parameter A = 16; // default is 16, but can be overridded to be equated to Z
+	parameter CHECKER_WIDTH = 16; // default is 16, but can be overridded to be equated to REGISTER_WIDTH
 	
-	input [A-1:0] reg_value;
-	input [A-1:0] exp_reg;
+	input [CHECKER_WIDTH-1:0] reg_value;
+	input [CHECKER_WIDTH-1:0] exp_reg;
 	output reg [31:0] error_reg;
 	
 	always @(*) begin

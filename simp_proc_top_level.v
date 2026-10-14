@@ -3,7 +3,7 @@ module simp_proc_top_level (
 	input [1:0] KEY,
 	
 	output [9:0] LEDR,
-	output [6:0] HEX5
+	output [7:0] HEX5
 	
 	);
 	

@@ -350,6 +350,8 @@ module proc_tb;
 			test_count
 			);
 		
+		$display("TESTS CONDUCTED:");
+		$display("Intial state check, reset, add, sub, movi, addi");
 		
 		$stop;
 		
