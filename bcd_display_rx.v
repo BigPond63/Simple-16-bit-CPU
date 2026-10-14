@@ -32,7 +32,7 @@ module binary_to_bcd (
 		
 		// check that the number is negative
 		if (binary[15] == 1) begin
-			magnitude = ~binary + 1;
+			magnitude = ~binary + 16'd1;
 		end else begin
 			magnitude = binary;
 		end
@@ -84,7 +84,7 @@ module seven_seg_display (
 
 	always @(*) begin
 		case (display)
-			default: segment = 8'b1;
+			default: segment = {8{1'b1}};
 			4'd0: segment = {~sign, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}; // 7 6 5 4 3 2 1 0
 			4'd1: segment = {~sign, 1'b1, 1'b1, 1'b1, 1'b1, 1'b0, 1'b0, 1'b1};
 			4'd2: segment = {~sign, 1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0};

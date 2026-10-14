@@ -8,12 +8,12 @@ module clock_div_10hz (
 	always @(posedge clk) begin
 	
 		if (counter == 25'd5000000) begin
-			counter <= 25'b0;
-			tick <= 1'b1;
+			counter <= 25'd0;
+			tick <= 1'd1;
 			
 		end else begin
-			counter <= counter + 1;
-			tick <= 1'b0;
+			counter <= counter + 25'd1;
+			tick <= 1'd0;
 		end
 
 	end

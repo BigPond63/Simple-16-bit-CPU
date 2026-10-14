@@ -23,7 +23,7 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
 	 input [0:0] clk;
 	 input [0:0] rst;
 	 input [8:0] din;
-	 output [3:0] R0;
+	 output [15:0] R0;
 	 output [15:0] R1;
 	 output [15:0] R2;
 	 output [15:0] R3;
@@ -80,6 +80,15 @@ module proc_extension (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, displ
     assign display = output_H;
 	 assign bus = bus_wire;
 	 assign fsm_tick = tick_fsm_out;
+	 
+	 assign R0 = output_R0;
+	 assign R1 = output_R1;
+	 assign R2 = output_R2;
+	 assign R3 = output_R3;
+	 assign R4 = output_R4;
+	 assign R5 = output_R5;
+	 assign R6 = output_R6;
+	 assign R7 = output_R7;
 
     // TODO: instantiate registers:
 	 register_n #(.N(9)) reg_IR(

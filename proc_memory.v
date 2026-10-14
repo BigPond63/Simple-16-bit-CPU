@@ -23,7 +23,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 	 input [0:0] clk;
 	 input [0:0] rst;
 	 input [8:0] din;
-	 output [3:0] R0;
+	 output [15:0] R0;
 	 output [15:0] R1;
 	 output [15:0] R2;
 	 output [15:0] R3;
@@ -79,11 +79,18 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 	 reg H_in;
 	 reg PC_in;
 	 
-	 reg [15:0] PC_address = 16'b0;
+	 reg [15:0] PC_address;
 	 
 	 output [15:0] pc_addr;
 	 
-	 
+	 assign R0 = output_R0;
+	 assign R1 = output_R1;
+	 assign R2 = output_R2;
+	 assign R3 = output_R3;
+	 assign R4 = output_R4;
+	 assign R5 = output_R5;
+	 assign R6 = output_R6;
+	 assign R7 = output_R7;
 	
 	 
 	 assign pc_addr = PC_address;
@@ -242,7 +249,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
     
     // input to control unit -> current instruction and tick FSM output
     // TODO: define control unit:
-    always @(tick_fsm_out or output_IR or enable) begin
+    always @(*) begin
         // TODO: Turn off all control signals:
 		  R_in = 8'b0;
 		  A_in = 1'b0;
@@ -252,7 +259,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 		  sel_reg = 4'b1111;
 		  H_in = 1'b0;
 		  PC_in = 1'b0;
-		  PC_address = PC_address; // self assignment to take away latch warning
+		  PC_address = output_PC; // take away latch warning
 
 		if (enable) begin
         // TODO: Turn on specific control signals based on current tick:
@@ -293,7 +300,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 							
 							3'd2: begin // addi
 								PC_in = 1'b1;
-								PC_address = output_PC + 1;
+								PC_address = output_PC + 16'd1;
 								A_in = 1'b1;
 								sel_reg = 4'd9; // selection for the sign ext din
 							end
@@ -310,21 +317,21 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 							
 							3'd5: begin // ssi
 								PC_in = 1'b1;
-								PC_address = output_PC + 1'd1;
+								PC_address = output_PC + 16'd1;
 								A_in = 1'b1;
 								sel_reg = 4'd9;
 							end
 							
 							3'd6: begin // bez
 								PC_in = 1'b1;
-								PC_address = output_PC + 1;
+								PC_address = output_PC + 16'd1;
 								A_in = 1'b1; // place into reg A
 								sel_reg = 4'd9; // immediate value for bez
 							end
 							
 							3'd7: begin // movi
 								PC_in = 1'b1;
-								PC_address = output_PC + 1;
+								PC_address = output_PC + 16'd1;
 								sel_reg = 4'd9;
 								R_in[output_IR[5:3]] = 1'b1; // activate Rx
 							end
@@ -351,7 +358,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 								
 								3'd0: begin // disp increment by 2
 									PC_in = 1'b1;
-									PC_address = output_PC + 2; 
+									PC_address = output_PC + 16'd2; 
 								end
 								
 							  3'd1: begin // add
@@ -392,10 +399,10 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 									sel_reg = {1'd0, output_IR[5:3]}; // get reg contents see if 0
 									if (bus_wire == 16'b0) begin
 										PC_in = 1'b1;
-										PC_address = output_PC + output_A + output_A + 1'd1;
+										PC_address = output_PC + output_A + output_A + 16'd1;
 									end else begin
 										PC_in = 1'b1;
-										PC_address = output_PC + 1'd1;
+										PC_address = output_PC + 16'd1;
 									end
 										
 									
@@ -403,7 +410,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 								
 								3'd7: begin
 									PC_in = 1'b1;
-									PC_address = output_PC + 1'd1;
+									PC_address = output_PC + 16'd1;
 									
 								end
 								
@@ -430,7 +437,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 								  R_in[output_IR[5:3]] = 1'b1;
 								  
 								  PC_in = 1'b1;
-								  PC_address = output_PC + 2'd2;
+								  PC_address = output_PC + 16'd2;
 								end
 								  
 								3'd2: begin // addi
@@ -438,7 +445,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 									R_in[output_IR[5:3]] = 1'b1; 
 									
 									PC_in = 1'b1;
-									PC_address = output_PC + 1'd1;
+									PC_address = output_PC + 16'd1;
 								end
 								
 								3'd3: begin // sub
@@ -446,7 +453,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 									R_in[output_IR[5:3]] = 1'b1; // rx
 									
 									PC_in = 1'b1;
-									PC_address = output_PC + 2'd2;
+									PC_address = output_PC + 16'd2;
 								end
 								
 								3'd4: begin // mul
@@ -454,7 +461,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 									R_in[output_IR[5:3]] = 1'b1; // rx
 									
 									PC_in = 1'b1;
-									PC_address = output_PC + 2'd2;
+									PC_address = output_PC + 16'd2;
 								end
 								
 								3'd5: begin // ssi
@@ -462,7 +469,7 @@ module proc_memory (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display,
 									R_in[output_IR[5:3]] = 1'b1; // rx
 									
 									PC_in = 1'b1;
-									PC_address = output_PC + 1'd1;
+									PC_address = output_PC + 16'd1;
 								end
 								
 								3'd6: ; // idle branch, bez
