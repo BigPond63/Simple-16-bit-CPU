@@ -25,6 +25,9 @@ wire [3:0] HEX4_wire;
 
 
 assign LEDR = bus_wire[9:0];
+//{6'b0, fsm_state};
+
+// 
 
 assign HEX4_wire = bcd_wire[19:16];
 assign HEX3_wire = bcd_wire[15:12];
