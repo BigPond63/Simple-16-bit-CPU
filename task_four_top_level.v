@@ -1,6 +1,6 @@
 module task_four_top_level (
 	input CLOCK_50,
-	input [1:0] KEY,
+	input [0:0] KEY,
 	input [9:9] SW,
 	
 	output [9:0] LEDR,
