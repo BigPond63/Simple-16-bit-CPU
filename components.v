@@ -1,12 +1,3 @@
-/*
-Monash University ECE2072: Assignment 
-This file contains Verilog code to implement individual components to be used in 
-    the CPU.
-
-Please enter your name and student ID:
-
-*/
-
 
 module sign_extend(in, ext);
 	/* 

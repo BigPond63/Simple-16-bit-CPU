@@ -1,6 +1,3 @@
-// use the double dabble algorithm
-// AI -> help get idea
-
 
 module binary_to_bcd (
 	input [15:0] binary,

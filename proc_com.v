@@ -1,20 +1,4 @@
-/*
-Monash University ECE2072: Assignment 
-This file contains Verilog code to implement the extended version of CPU.
 
-Please enter your student ID:
-
-
-*/
- // TODO: Copy and paste your task 2 into here
-
-/*
-Monash University ECE2072: Assignment 
-This file contains Verilog code to implement individual the CPU.
-
-Please enter your student ID:
-
-*/
 module proc_communication (clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, display, enable, fsm_tick);
 
     // Note: The skeleton you are provided with includes output ports to output the values of the internal registers R0 - R7, for the purpose of test benching. When instantiating the processor to program your DE10-lite, you can leave these ports unused.

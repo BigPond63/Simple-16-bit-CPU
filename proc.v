@@ -1,10 +1,4 @@
-/*
-Monash University ECE2072: Assignment 
-This file contains Verilog code to implement individual the CPU.
 
-Please enter your student ID:
-
-*/
 module simple_proc(clk, rst, din, bus, R0, R1, R2, R3, R4, R5, R6, R7, FSM_tick);
 
     // Note: The skeleton you are provided with includes output ports to output the values of the internal registers R0 - R7, for the purpose of test benching. When instantiating the processor to program your DE10-lite, you can leave these ports unused.

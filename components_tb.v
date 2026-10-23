@@ -1,13 +1,4 @@
 `timescale 1ns/1ps
-/*
-Monash University ECE2072: Assignment 
-This file contains a Verilog test bench to test the correctness of the individual 
-    components used in the processor.
-
-Please enter your student ID:
-	36180521
-
-*/
 
 
 module fsm_tb(clk_fsm); // io be a flag to know when the next test bench should be done
